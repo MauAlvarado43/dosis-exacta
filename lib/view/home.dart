@@ -25,7 +25,7 @@ class HomeState extends State<Home> {
   }
 
   onClickRecordatorio() {
-    Navigator.of(context).pushNamed("/recordatorio/list");
+    Navigator.of(context).pushNamed("/recordatorio/home");
   }
 
   @override
