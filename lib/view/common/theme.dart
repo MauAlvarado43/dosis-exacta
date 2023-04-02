@@ -27,6 +27,7 @@ class AppColors {
   static secondary() => const Color(0xFF44BBA4);
   static accent() => const Color(0xFF7977AA);
   static danger() => const Color(0xFFF44336);
+  static darkbg() => const Color(0xFF640031);
 
 }
 

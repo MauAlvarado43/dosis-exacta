@@ -19,9 +19,9 @@ class _WelcomeState extends State<Welcome> {
 
   final TextEditingController _nameController = TextEditingController();
 
-  onClickStart() {
+  onClickStart() async {
 
-    bool result = viewModel.registerUser(_nameController.text);
+    bool result = await viewModel.registerUser(_nameController.text);
 
     if(result) {
       Navigator.of(context).pushReplacementNamed("/home");

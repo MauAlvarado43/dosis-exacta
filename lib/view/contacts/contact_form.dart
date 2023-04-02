@@ -6,6 +6,8 @@ import '../common/theme.dart';
 
 class ContactForm extends StatefulWidget {
 
+  const ContactForm({Key? key}) : super(key: key);
+
   @override
   State<ContactForm> createState() => _ContactFormState();
 
@@ -20,7 +22,29 @@ class _ContactFormState extends State<ContactForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
-  onClickSave() {
+  onClickSave() async {
+
+    bool result = false;
+
+    if(contact == null) {
+      result = await viewModel.createContact(
+        name: _nameController.text,
+        email: _emailController.text,
+        phone: _phoneController.text
+      );
+    }
+    else {
+      result = await viewModel.updateContact(
+        contact,
+        name: _nameController.text,
+        email: _emailController.text,
+        phone: _phoneController.text
+      );
+    }
+
+    if(result) {
+      Navigator.of(context).pop(true);
+    }
 
   }
 
@@ -35,6 +59,17 @@ class _ContactFormState extends State<ContactForm> {
 
   @override
   Widget build(BuildContext context) {
+
+    Map<String, dynamic>? args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    if(args != null && args["contact"] != null) {
+      setState(() {
+        contact = args["contact"];
+        _nameController.text = contact.name;
+        _emailController.text = contact.email;
+        _phoneController.text = contact.phone;
+      });
+    }
+
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -54,7 +89,7 @@ class _ContactFormState extends State<ContactForm> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 0.08.sh),
+              SizedBox(height: 0.06.sh),
               Padding(
                 padding: EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
                 child: Card(
@@ -64,7 +99,7 @@ class _ContactFormState extends State<ContactForm> {
                   elevation: 5,
                   child: Column(
                     children: [
-                      SizedBox(height: 0.05.sh),
+                      SizedBox(height: 0.04.sh),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -147,7 +182,7 @@ class _ContactFormState extends State<ContactForm> {
                           )
                         ),
                       ),
-                      SizedBox(height: 0.02.sh),
+                      SizedBox(height: 0.04.sh),
                     ],
                   ),
                 ),
@@ -159,14 +194,15 @@ class _ContactFormState extends State<ContactForm> {
                     onPressed: onClickReturn,
                     style: Styles.button(context, color: AppColors.primary()),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(width: 20.sp),
                         Icon(Icons.arrow_back, color: Colors.white, size: 40.sp),
                         SizedBox(width: 20.sp),
                         Text(
-                            "Regresar",
-                            style: AppTextTheme.medium(color: Colors.white)
+                          "Regresar",
+                          style: AppTextTheme.medium(color: Colors.white)
                         ),
+                        SizedBox(width: 25.sp),
                       ],
                     )
                 ),
@@ -175,6 +211,7 @@ class _ContactFormState extends State<ContactForm> {
           ),
         )
     );
+
   }
 
 }

@@ -1,11 +1,9 @@
-import 'package:path/path.dart';
+import 'package:dosis_exacta/model/database.dart';
 import 'package:sqflite/sqflite.dart';
 
 const String tableName = "contact";
 
 class Contact {
-
-  static late Database db;
 
   int? id;
   late String name;
@@ -14,51 +12,22 @@ class Contact {
 
   Contact({ required this.name, required this.email, required this.phone });
 
-  static Future _open() async {
-
-    String path = await getDatabasesPath();
-
-    db = await openDatabase(
-        join(path, 'dosis_exacta.db'),
-        version: 1,
-        onCreate: (Database db, int version) async {
-          await db.execute('''
-          create table $tableName ( 
-            id integer primary key autoincrement, 
-            name text not null,
-            email text not null,
-            phone text not null,
-          )
-        ''');
-        }
-    );
-
-  }
-
-  static Future _close() async {
-    await db.close();
-  }
-
   Future save() async {
-    await _open();
+    Database db = await openDB();
     id = await db.insert(tableName, _toMap());
-    _close();
+    db.close();
   }
 
   static Future<List<Contact>?> getAll() async {
-
-    await _open();
-
+    Database db = await openDB();
     List<Map> maps = await db.query(tableName);
-    _close();
-
+    db.close();
     return maps.map((map) => Contact.fromMap(map)).toList();
-
   }
 
   static Future<Contact?> get(int id) async {
 
-    await _open();
+    Database db = await openDB();
 
     List<Map> maps = await db.query(
         "SELECT * FROM " + tableName,
@@ -67,35 +36,24 @@ class Contact {
         whereArgs: [id]
     );
 
-    _close();
+    db.close();
 
     return maps.map((map) => Contact.fromMap(map)).toList().first;
 
   }
 
   Future delete() async {
-
-    await _open();
-
+    Database db = await openDB();
     if(id == null) throw Exception("User id is null");
     await db.delete(tableName, where: "id = ?", whereArgs: [id]);
-
-    await _close();
-
+    db.close();
   }
 
   Future update({ name, email, phone }) async {
-
-    _open();
-
-    if(name != null) this.name = name;
-    if(name != null) this.email = name;
-    if(name != null) this.phone = name;
-
+    Database db = await openDB();
+    if(id == null) throw Exception("User id is null");
     await db.update(tableName, _toMap(), where: "id = ?", whereArgs: [id]);
-
-    _close();
-
+    db.close();
   }
 
   Map<String, Object?> _toMap() {

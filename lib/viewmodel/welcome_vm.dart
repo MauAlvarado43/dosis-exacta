@@ -2,12 +2,20 @@ import 'package:dosis_exacta/model/user.dart';
 
 class WelcomeVW {
 
-  bool registerUser(String name) {
+  Future<bool> registerUser(String name) async {
 
     if(name.isNotEmpty) {
+
       User user = User(name: name);
-      user.save();
-      return true;
+
+      try {
+        await user.save();
+        return true;
+      }
+      catch (e){
+        return false;
+      }
+
     }
 
     return false;

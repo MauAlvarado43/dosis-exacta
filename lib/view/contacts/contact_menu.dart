@@ -6,6 +6,8 @@ import '../common/theme.dart';
 
 class ContactMenu extends StatefulWidget {
 
+  const ContactMenu({Key? key}) : super(key: key);
+
   @override
   State<ContactMenu> createState() => _ContactMenuState();
 
@@ -19,6 +21,10 @@ class _ContactMenuState extends State<ContactMenu> {
 
   onClickAdd() {
     Navigator.of(context).pushNamed("/contacts/form");
+  }
+
+  onClickEdit() {
+    Navigator.of(context).pushNamed("/contacts/list");
   }
 
   onClickReturn() {
@@ -57,8 +63,8 @@ class _ContactMenuState extends State<ContactMenu> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  "Alertas",
-                  style: AppTextTheme.medium(color: Colors.white)
+                "Alertas",
+                style: AppTextTheme.medium(color: Colors.white)
               )
             ],
           ),
@@ -91,7 +97,7 @@ class _ContactMenuState extends State<ContactMenu> {
               Padding(
                 padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
                 child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: onClickEdit,
                     style: Styles.button(context, color: AppColors.primary()),
                     child: Row(
                       children: [
@@ -113,14 +119,15 @@ class _ContactMenuState extends State<ContactMenu> {
                     onPressed: onClickReturn,
                     style: Styles.button(context, color: AppColors.primary()),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(width: 20.sp),
                         Icon(Icons.arrow_back, color: Colors.white, size: 40.sp),
                         SizedBox(width: 20.sp),
                         Text(
                             "Regresar",
                             style: AppTextTheme.medium(color: Colors.white)
                         ),
+                        SizedBox(width: 25.sp),
                       ],
                     )
                 ),

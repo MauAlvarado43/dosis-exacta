@@ -1,60 +1,31 @@
-import 'package:path/path.dart';
+import 'package:dosis_exacta/model/database.dart';
 import 'package:sqflite/sqflite.dart';
 
 const String tableName = "user";
 
 class User {
 
-  static late Database db;
-
   int? id;
   late String name;
 
   User({ required this.name });
 
-  static Future _open() async {
-
-    String path = await getDatabasesPath();
-
-    db = await openDatabase(
-      join(path, 'dosis_exacta.db'),
-      version: 1,
-      onCreate: (Database db, int version) async {
-        await db.execute('''
-          create table $tableName ( 
-            id integer primary key autoincrement, 
-            name text not null
-          )
-        ''');
-      }
-    );
-
-  }
-
-  static Future _close() async {
-    await db.close();
-  }
-
   Future save() async {
-    await _open();
+    Database db = await openDB();
     id = await db.insert(tableName, _toMap());
-    _close();
+    db.close();
   }
 
   static Future<List<User>?> getAll() async {
-
-    await _open();
-
+    Database db = await openDB();
     List<Map> maps = await db.query(tableName);
-    _close();
-
+    db.close();
     return maps.map((map) => User.fromMap(map)).toList();
-
   }
 
   static Future<User?> get(int id) async {
 
-    await _open();
+    Database db = await openDB();
 
     List<Map> maps = await db.query(
       "SELECT * FROM " + tableName,
@@ -63,32 +34,24 @@ class User {
       whereArgs: [id]
     );
 
-    _close();
+    db.close();
 
     return maps.map((map) => User.fromMap(map)).toList().first;
 
   }
 
   Future delete() async {
-
-    await _open();
-
+    Database db = await openDB();
     if(id == null) throw Exception("User id is null");
     await db.delete(tableName, where: "id = ?", whereArgs: [id]);
-
-    await _close();
-
+    db.close();
   }
 
   Future update({ name }) async {
-
-    _open();
-
+    Database db = await openDB();
     if(name != null) this.name = name;
-
     await db.update(tableName, _toMap(), where: "id = ?", whereArgs: [id]);
-
-    _close();
+    db.close();
 
   }
 
