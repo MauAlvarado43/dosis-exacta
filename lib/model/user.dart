@@ -1,36 +1,32 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-const String tableName = "contact";
+const String tableName = "user";
 
-class Contact {
+class User {
 
   static late Database db;
 
   int? id;
   late String name;
-  late String email;
-  late String phone;
 
-  Contact({ required this.name, required this.email, required this.phone });
+  User({ required this.name });
 
   static Future _open() async {
 
     String path = await getDatabasesPath();
 
     db = await openDatabase(
-        join(path, 'dosis_exacta.db'),
-        version: 1,
-        onCreate: (Database db, int version) async {
-          await db.execute('''
+      join(path, 'dosis_exacta.db'),
+      version: 1,
+      onCreate: (Database db, int version) async {
+        await db.execute('''
           create table $tableName ( 
             id integer primary key autoincrement, 
-            name text not null,
-            email text not null,
-            phone text not null,
+            name text not null
           )
         ''');
-        }
+      }
     );
 
   }
@@ -45,31 +41,31 @@ class Contact {
     _close();
   }
 
-  static Future<List<Contact>?> getAll() async {
+  static Future<List<User>?> getAll() async {
 
     await _open();
 
     List<Map> maps = await db.query(tableName);
     _close();
 
-    return maps.map((map) => Contact.fromMap(map)).toList();
+    return maps.map((map) => User.fromMap(map)).toList();
 
   }
 
-  static Future<Contact?> get(int id) async {
+  static Future<User?> get(int id) async {
 
     await _open();
 
     List<Map> maps = await db.query(
-        "SELECT * FROM " + tableName,
-        columns: ["id", "name"],
-        where: "id = ?",
-        whereArgs: [id]
+      "SELECT * FROM " + tableName,
+      columns: ["id", "name"],
+      where: "id = ?",
+      whereArgs: [id]
     );
 
     _close();
 
-    return maps.map((map) => Contact.fromMap(map)).toList().first;
+    return maps.map((map) => User.fromMap(map)).toList().first;
 
   }
 
@@ -84,13 +80,11 @@ class Contact {
 
   }
 
-  Future update({ name, email, phone }) async {
+  Future update({ name }) async {
 
     _open();
 
     if(name != null) this.name = name;
-    if(name != null) this.email = name;
-    if(name != null) this.phone = name;
 
     await db.update(tableName, _toMap(), where: "id = ?", whereArgs: [id]);
 
@@ -101,18 +95,14 @@ class Contact {
   Map<String, Object?> _toMap() {
     var map = <String, Object?> {
       "name": name,
-      "email": email,
-      "phone": phone
     };
     if(id != null) map["id"] = id;
     return map;
   }
 
-  Contact.fromMap(Map<dynamic, dynamic> map) {
+  User.fromMap(Map<dynamic, dynamic> map) {
     id = map["id"] as int;
     name = map["name"] as String;
-    email = map["email"] as String;
-    phone = map["phone"] as String;
   }
 
 }

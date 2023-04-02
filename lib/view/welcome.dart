@@ -1,4 +1,5 @@
 import 'package:dosis_exacta/view/common/theme.dart';
+import 'package:dosis_exacta/viewmodel/welcome_vm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,11 +13,52 @@ class Welcome extends StatefulWidget {
 
 class _WelcomeState extends State<Welcome> {
 
+  bool isLoading = true;
+  bool showValidation = false;
+  WelcomeVW viewModel = WelcomeVW();
+
   final TextEditingController _nameController = TextEditingController();
+
+  onClickStart() {
+
+    bool result = viewModel.registerUser(_nameController.text);
+
+    if(result) {
+      Navigator.of(context).pushReplacementNamed("/home");
+    }
+    else {
+      setState(() {
+        showValidation = true;
+      });
+    }
+
+  }
+
+  @override
+  void initState() {
+
+    super.initState();
+
+    WidgetsBinding.instance?.addPostFrameCallback((_) async{
+
+      var user = await viewModel.checkExistingUser();
+
+      if(user != null) {
+        Navigator.of(context).pushReplacementNamed("/home");
+      }
+      else {
+        setState(() {
+          isLoading = false;
+        });
+      }
+
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return isLoading ? const  Scaffold() : Scaffold(
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -43,11 +85,20 @@ class _WelcomeState extends State<Welcome> {
                 decoration: Styles.input(context, controller: _nameController),
               ),
             ),
-            SizedBox(height: 0.10.sh),
+            SizedBox(height: 0.05.sh),
+            showValidation
+              ?  Text(
+                "Ingresa tu nombre para poder comenzar",
+                style: AppTextTheme.medium(color: Colors.redAccent)
+              )
+              : Container(),
+            showValidation
+              ? SizedBox(height: 0.05.sh)
+              : Container(),
             Padding(
               padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
               child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: onClickStart,
                   style: Styles.button(context, color: AppColors.primary()),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
