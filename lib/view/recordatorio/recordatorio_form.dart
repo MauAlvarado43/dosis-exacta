@@ -140,7 +140,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          width: 300.0,
+                          width: 0.37.sh,
                           margin: EdgeInsets.all(15),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
@@ -182,7 +182,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                         ? Row(
                             children: [
                               Container(
-                                width: 300.0,
+                                width: 0.37.sh,
                                 margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
@@ -323,7 +323,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          width: 300.0,
+                          width: 0.37.sh,
                           margin: EdgeInsets.all(15),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
@@ -365,7 +365,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                         ? Row(
                           children: [
                             Container(
-                              width: 300.0,
+                              width: 0.37.sh,
                               margin: EdgeInsets.all(15),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
@@ -424,7 +424,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          width: 300.0,
+                          width: 0.37.sh,
                           margin: EdgeInsets.all(15),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
