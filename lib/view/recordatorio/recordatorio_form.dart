@@ -226,7 +226,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                         ? Row(
                         children: [
                           Container(
-                            width: 140.0,
+                            width: 0.175.sh,
                             margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.0),
@@ -264,7 +264,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                             ),
                           ),
                           Container(
-                            width: 140.0,
+                            width: 0.175.sh,
                             margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.0),
