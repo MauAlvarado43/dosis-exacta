@@ -6,17 +6,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../common/theme.dart';
 
-class RecordatorioHome extends StatefulWidget {
+class RemainderHome extends StatefulWidget {
 
-  const RecordatorioHome({Key? key}) : super(key: key);
+  const RemainderHome({Key? key}) : super(key: key);
 
   @override
-  State<RecordatorioHome> createState() => _RecordatorioHome();
+  State<RemainderHome> createState() => _RemainderHome();
 
 }
 
 
-class _RecordatorioHome extends State<RecordatorioHome> {
+class _RemainderHome extends State<RemainderHome> {
 
   bool isLoading = true;
   HomeVM viewModel = HomeVM();
@@ -26,9 +26,9 @@ class _RecordatorioHome extends State<RecordatorioHome> {
   var time = ["18:15","1/3","19:23"];
   var medicine = ["Paracetamol","Luvox","Buscapina"];
   var time_left = ["Dentro de 2 horas","en 10 minutos","Dentro de 3 minutos"];
-  var indicacions = ["2 tabletas","Media tableta","1 tableta"];
+  var indication = ["2 tabletas","Media tableta","1 tableta"];
 
-  var mostrado = [0,0,0];
+  var shown = [0,0,0];
 
   onClickEdit() {
     Navigator.of(context).pushNamed("/recordatorio/list");
@@ -39,18 +39,18 @@ class _RecordatorioHome extends State<RecordatorioHome> {
   }
 
   onClickingested(int index){
-    mostrado[index] = 1;
+    shown[index] = 1;
   }
 
   refreshRemainders() async{
     setState(() {
       for(var i = 0; i<medicine.length;i++){
-        if(mostrado[i]==1){
+        if(shown[i]==1){
           medicine.removeAt(i);
           time.removeAt(i);
           time_left.removeAt(i);
-          indicacions.removeAt(i);
-          mostrado.removeAt(i);
+          indication.removeAt(i);
+          shown.removeAt(i);
         }
       }
     });
@@ -145,7 +145,7 @@ class _RecordatorioHome extends State<RecordatorioHome> {
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: Text(indicacions[index],style:AppTextTheme.small(),maxLines: 3,overflow: TextOverflow.clip,),
+                                  child: Text(indication[index],style:AppTextTheme.small(),maxLines: 3,overflow: TextOverflow.clip,),
                                 )
                               ],
                             ),

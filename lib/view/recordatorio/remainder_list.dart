@@ -4,16 +4,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../common/theme.dart';
 
-class RecordatorioList extends StatefulWidget {
+class RemainderList extends StatefulWidget {
 
-  const RecordatorioList({Key? key}) : super(key: key);
+  const RemainderList({Key? key}) : super(key: key);
 
   @override
-  State<RecordatorioList> createState() => _RecordatorioList();
+  State<RemainderList> createState() => _RemainderList();
 
 }
 
-class _RecordatorioList extends State<RecordatorioList> {
+class _RemainderList extends State<RemainderList> {
 
   bool isLoading = true;
   HomeVM viewModel = HomeVM();
@@ -21,7 +21,7 @@ class _RecordatorioList extends State<RecordatorioList> {
   var time = ["8:00","10:15",""].cast<dynamic>();
   var medicine = ["Paracetamol","Luvox","Buscapina"].cast<dynamic>();
   var time_left = ["Cada 8 horas","Cada 12 horas","3 veces al dia"].cast<dynamic>();
-  var indicacions = ["2 tabletas","Media tableta","1 tableta"].cast<dynamic>();
+  var indications = ["2 tabletas","Media tableta","1 tableta"].cast<dynamic>();
   onClickAddHand (){
     Navigator.of(context).pushNamed("/recordatorio/form");
   }
@@ -43,7 +43,7 @@ class _RecordatorioList extends State<RecordatorioList> {
       medicine.removeAt(index);
       time.removeAt(index);
       time_left.removeAt(index);
-      indicacions.removeAt(index);
+      indications.removeAt(index);
     });
   }
 
@@ -136,7 +136,7 @@ class _RecordatorioList extends State<RecordatorioList> {
                               child: Row(
                                 children: [
                                   Expanded(
-                                    child: Text(indicacions[index],style:AppTextTheme.small(),maxLines: 3,overflow: TextOverflow.clip,),
+                                    child: Text(indications[index],style:AppTextTheme.small(),maxLines: 3,overflow: TextOverflow.clip,),
                                   )
                                 ],
                               ),
