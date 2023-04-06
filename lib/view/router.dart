@@ -17,7 +17,7 @@ var ROUTER = {
   "/contacts/list": (context) => const ContactList(),
   "/recordatorio/menu": (context) => const RecordatorioMenu(), // Menu
   "/recordatorio/form": (context) => const RecordatorioForm(), // Detalles Medicina
-  "/recordatorio/photo": (context) => const RecordatorioPhoto(), // Tomar Foto
+  "/recordatorio/photo": (context) => const RemainderPhoto(), // Tomar Foto
   "/recordatorio/list": (context) => const RemainderList(), // Recordatorios Modificar
   "/recordatorio/home": (context) => const RemainderHome() // Recordatorios
 };
