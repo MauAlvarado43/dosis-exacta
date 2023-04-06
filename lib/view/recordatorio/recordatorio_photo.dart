@@ -59,8 +59,7 @@ class StateRemainderPhoto extends State<RemainderPhoto> {
 
   @override
   void dispose() {
-    // Asegúrate de deshacerte del controlador cuando se deshaga del Widget.
-    controller.dispose();
+    controller.dispose(); // Destruccion del controlador
     super.dispose();
   }
 
