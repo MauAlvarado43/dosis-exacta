@@ -22,6 +22,29 @@ Future<Database> openDB() async {
     )
   ''');
 
+  await db.execute('''
+    create table if not exists drug (
+      id integer primary key autoincrement,
+      name text not null,
+      freq_type text not null,
+      freq integer not null,
+      start_hour time not null,
+      days integer,
+      duration text not null,
+      indications text
+    )
+  ''');
+
+  await db.execute('''
+    create table if not exists remainder (
+      id integer primary key autoincrement,
+      ingested integer not null,
+      date datetime not null,
+      drug_id integer not null,
+      foreign key(drug_id) references drug(id) on delete no action on update cascade
+    )
+  ''');
+
   return db;
 
 }

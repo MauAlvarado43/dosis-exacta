@@ -44,14 +44,14 @@ class Contact {
 
   Future delete() async {
     Database db = await openDB();
-    if(id == null) throw Exception("User id is null");
+    if(id == null) throw Exception("Contact id is null");
     await db.delete(tableName, where: "id = ?", whereArgs: [id]);
     db.close();
   }
 
-  Future update({ name, email, phone }) async {
+  Future update() async {
     Database db = await openDB();
-    if(id == null) throw Exception("User id is null");
+    if(id == null) throw Exception("Contact id is null");
     await db.update(tableName, _toMap(), where: "id = ?", whereArgs: [id]);
     db.close();
   }

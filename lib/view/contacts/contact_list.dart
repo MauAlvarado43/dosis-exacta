@@ -161,7 +161,6 @@ class _ContactListState extends State<ContactList> {
                     );
                   }
                 )
-
               ),
               SizedBox(height: 0.05.sh),
               Padding(

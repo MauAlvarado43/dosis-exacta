@@ -27,7 +27,7 @@ class ContactVM {
     if(phone != null) contact.phone = phone;
 
     try {
-      await contact.update(name: name, email: email, phone: phone);
+      await contact.update();
       return true;
     }
     catch(e){
