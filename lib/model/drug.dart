@@ -8,11 +8,11 @@ class Drug {
 
   int? id;
   late String name;
-  late FREQ_TYPE freq_type;
+  late FREQ_TYPE freq_type; // FREQ_TYPE
   late int freq;
-  late DateTime start_hour;
+  late String start_hour;
   int? days;
-  late DURATION duration;
+  late DURATION duration; // DURATION
   late String? indications;
 
   Drug({ required this.name, required this.freq_type, required this.freq, required this.start_hour, required this.duration });
