@@ -23,8 +23,16 @@ class _RecordatorioForm extends State<RecordatorioForm> {
   String? _selectedTimes;
   String? _selectedDays;
 
+  final TextEditingController _nameController = TextEditingController();
+
   final List<String> _options = ['Dosis Diaria', 'Horas'];
-  final List<String> _timesForDay = ['1 vez al día', '2 veces al día', '3 veces al día', '4 veces al día', '6 veces al día'];
+  final List<String> _timesForDay = [
+    '1 vez al día',
+    '2 veces al día',
+    '3 veces al día',
+    '4 veces al día',
+    '6 veces al día'
+  ];
   final List<String> _hours = [
     '1:00 am',
     '2:00am',
@@ -51,7 +59,18 @@ class _RecordatorioForm extends State<RecordatorioForm> {
     '11:00pm',
     '12:00am'
   ];
-  final List<String> _days = ['1 día', '2 días', '3 días', '4 días', '5 días', '6 días', '7 días', '8 días', '9 días', '10 días'];
+  final List<String> _days = [
+    '1 día',
+    '2 días',
+    '3 días',
+    '4 días',
+    '5 días',
+    '6 días',
+    '7 días',
+    '8 días',
+    '9 días',
+    '10 días'
+  ];
   final List<String> _intervals = [
     '4 horas',
     '8 horas',
@@ -121,11 +140,29 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                 child: Column(
                   children: [
                     SizedBox(
-                      height: 0.03.sh,
+                      height: 0.02.sh,
                     ),
-
-
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
+                          child: Text("Nombre del medicamento",
+                              style: AppTextTheme.medium()),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 0.01.sh),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
+                      child: TextField(
+                        controller: _nameController,
+                        decoration:
+                            Styles.input(context, controller: _nameController),
+                      ),
+                    ),
                     //SELECT FREQUENCY
+                    SizedBox(height: 0.02.sh),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -141,7 +178,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                       children: [
                         Container(
                           width: 0.37.sh,
-                          margin: EdgeInsets.all(15),
+                          margin: EdgeInsets.all(13),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(
@@ -192,7 +229,8 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                                   ),
                                 ),
                                 child: DropdownButton<String>(
-                                  hint: Text('  Selecciona una opción...       '),
+                                  hint:
+                                      Text('  Selecciona una opción...       '),
                                   value: _selectedTimes,
                                   icon: Icon(Icons.arrow_drop_down),
                                   iconSize: 24.0,
@@ -222,35 +260,34 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                             ],
                           )
                         : Container(),
-                      _selectedOption == "Horas"
+                    _selectedOption == "Horas"
                         ? Row(
-                        children: [
-                          Container(
-                            width: 0.175.sh,
-                            margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1.0,
-                              ),
-                            ),
-                            child: DropdownButton<String>(
-                              hint: Text('   Hora               '),
-                              value: _selectedHour,
-                              icon: Icon(Icons.arrow_drop_down),
-                              iconSize: 23.0,
-                              elevation: 16,
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: 0.020.sh),
-                              underline: Container(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _selectedHour = newValue!;
-                                });
-                              },
-                              items: _hours
-                                  .map<DropdownMenuItem<String>>(
+                            children: [
+                              Container(
+                                width: 0.175.sh,
+                                margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                ),
+                                child: DropdownButton<String>(
+                                  hint: Text('   Hora               '),
+                                  value: _selectedHour,
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  iconSize: 23.0,
+                                  elevation: 16,
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 0.020.sh),
+                                  underline: Container(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedHour = newValue!;
+                                    });
+                                  },
+                                  items: _hours.map<DropdownMenuItem<String>>(
                                       (String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
@@ -261,35 +298,35 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                                       ),
                                     );
                                   }).toList(),
-                            ),
-                          ),
-                          Container(
-                            width: 0.175.sh,
-                            margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1.0,
+                                ),
                               ),
-                            ),
-                            child: DropdownButton<String>(
-                              hint: Text('   Periodo          '),
-                              value: _selectedInterval,
-                              icon: Icon(Icons.arrow_drop_down),
-                              iconSize: 23.0,
-                              elevation: 16,
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: 0.020.sh),
-                              underline: Container(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _selectedInterval = newValue!;
-                                });
-                              },
-                              items: _intervals
-                                  .map<DropdownMenuItem<String>>(
-                                      (String value) {
+                              Container(
+                                width: 0.175.sh,
+                                margin: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                ),
+                                child: DropdownButton<String>(
+                                  hint: Text('   Periodo          '),
+                                  value: _selectedInterval,
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  iconSize: 23.0,
+                                  elevation: 16,
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 0.020.sh),
+                                  underline: Container(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedInterval = newValue!;
+                                    });
+                                  },
+                                  items: _intervals
+                                      .map<DropdownMenuItem<String>>(
+                                          (String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Padding(
@@ -299,11 +336,11 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                                       ),
                                     );
                                   }).toList(),
-                            ),
-                          ),
-                        ],
-                      ) : Container(),
-
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(),
 
                     //SELECT FOR DURATION
                     SizedBox(
@@ -314,8 +351,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                       children: [
                         Padding(
                           padding: EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
-                          child:
-                          Text("Duración", style: AppTextTheme.medium()),
+                          child: Text("Duración", style: AppTextTheme.medium()),
                         )
                       ],
                     ),
@@ -352,7 +388,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                                 value: value,
                                 child: Padding(
                                   padding:
-                                  EdgeInsets.symmetric(horizontal: 10.0),
+                                      EdgeInsets.symmetric(horizontal: 10.0),
                                   child: Text(value),
                                 ),
                               );
@@ -363,48 +399,48 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                     ),
                     _selectedDuration == 'Días'
                         ? Row(
-                          children: [
-                            Container(
-                              width: 0.37.sh,
-                              margin: EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1.0,
-                                ),
-                              ),
-                              child: DropdownButton<String>(
-                                hint: Text('  Selecciona una opción...       '),
-                                value: _selectedDays,
-                                icon: Icon(Icons.arrow_drop_down),
-                                iconSize: 24.0,
-                                elevation: 16,
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 0.025.sh),
-                                underline: Container(),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _selectedDays = newValue!;
-                                  });
-                                },
-                                items: _days
-                                    .map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 10.0),
-                                          child: Text(value),
-                                        ),
-                                      );
-                                    }).toList(),
+                            children: [
+                              Container(
+                                width: 0.37.sh,
+                                margin: EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
                                   ),
                                 ),
-                              ],
-                            ) :
-                              Container(),
+                                child: DropdownButton<String>(
+                                  hint:
+                                      Text('  Selecciona una opción...       '),
+                                  value: _selectedDays,
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  iconSize: 24.0,
+                                  elevation: 16,
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 0.025.sh),
+                                  underline: Container(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedDays = newValue!;
+                                    });
+                                  },
+                                  items: _days.map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10.0),
+                                        child: Text(value),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(),
 
                     //INPUT FOR INDICATIONS
                     SizedBox(
@@ -415,8 +451,8 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                       children: [
                         Padding(
                           padding: EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
-                          child:
-                          Text("Indicaciones", style: AppTextTheme.medium()),
+                          child: Text("Indicaciones",
+                              style: AppTextTheme.medium()),
                         )
                       ],
                     ),
@@ -434,13 +470,33 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                             ),
                           ),
                           child: TextField(
-                            maxLines:3,
+                            maxLines: 3,
                             decoration: InputDecoration(
                               hintText: "Ingresar indicaciones adicionales",
                             ),
                           ),
                         ),
                       ],
+                    ),
+                    SizedBox(height: 0.02.sh),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
+                      child: ElevatedButton(
+                          style: Styles.button(context,
+                              color: AppColors.secondary()),
+                          onPressed: () {},
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding:
+                                    EdgeInsets.fromLTRB(0, 0.01.sh, 0, 0.01.sh),
+                                child: Text("Guardar",
+                                    style: AppTextTheme.medium(
+                                        color: Colors.white)),
+                              )
+                            ],
+                          )),
                     ),
                     SizedBox(height: 0.01.sh),
                   ],
@@ -456,8 +512,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.arrow_back,
-                          color: Colors.white, size: 40.sp),
+                      Icon(Icons.arrow_back, color: Colors.white, size: 40.sp),
                       SizedBox(width: 20.sp),
                       Text("Regresar",
                           style: AppTextTheme.medium(color: Colors.white)),
