@@ -84,10 +84,10 @@ class Drug {
     name = map["name"] as String;
     freq_type = freqFromString(map["freq_type"]);
     freq = map["freq"] as int;
-    start_hour = map["start_hour"];
+    start_hour = map["start_hour"] as int;
     days = map["days"] as int?;
     duration = durationFromString(map["duration"]);
-    indications = map["indications"];
+    indications = map["indications"] as String?;
   }
 
 }
