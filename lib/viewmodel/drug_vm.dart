@@ -17,7 +17,6 @@ class DrugVM {
 
     try {
       await drug.save();
-      print("Se guardó correctamente");
       return true;
     }catch(e){
       return false;

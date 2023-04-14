@@ -20,7 +20,6 @@ class Drug {
   Future save() async {
     Database db = await openDB();
     id = await db.insert(tableName, _toMap());
-    print("se guardó en la bd");
     db.close();
   }
 

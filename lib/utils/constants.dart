@@ -14,4 +14,4 @@ extension ParseStringDuration on DURATION {
   String get name => describeEnum(this);
 }
 
-DURATION durationFromString(String str) => DURATION.values.firstWhere((e) => e.toString() == 'FREQ_TYPE.' + str);
+DURATION durationFromString(String str) => DURATION.values.firstWhere((e) => e.toString() == 'DURATION.' + str);

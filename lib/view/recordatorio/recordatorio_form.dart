@@ -137,18 +137,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
           indications: _indicationsController.text);
     }
 
-    //DELETE
-    print(_nameController.text);
-    print(sendFreq_type);
-    print(sendTemp);
-    print(sendStart_hour);
-    print(sendDays);
-    print(sendDuration);
-    print(_indicationsController.text);
-    //
-
     if(result){
-      print("se guardó");
       Navigator.of(context).pop(true);
     }
   }
