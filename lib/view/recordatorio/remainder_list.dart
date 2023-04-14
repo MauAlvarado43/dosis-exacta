@@ -22,10 +22,12 @@ class _RemainderList extends State<RemainderList> {
   var user;
   var drugs = [];
   var TimeOrPill = [];
+  var timeLeft = [];
 
   refreshDrugs() async {
     var updateDrugs = (await viewModel.getDrugs())!.cast<dynamic>();
     var updateTimeOrPill = [];
+    var updateTimeLeft = [];
 
     setState(() {
       drugs = updateDrugs;
@@ -35,10 +37,14 @@ class _RemainderList extends State<RemainderList> {
         }else{
           updateTimeOrPill.add("Cada "+drugs[i].start_hour.toString()+" horas"); //cambiar a interval
         }
-
+        if(drugs[i].duration == DURATION.DAILY){
+          updateTimeLeft.add("Por "+drugs[i].days.toString()+" días");
+        }else{
+          updateTimeLeft.add("Sin tiempo límite");
+        }
       }
       TimeOrPill = updateTimeOrPill;
-
+      timeLeft = updateTimeLeft;
     });
   }
 
@@ -126,7 +132,7 @@ class _RemainderList extends State<RemainderList> {
                                   ),
                                   Container(
                                     width: 50,
-                                    child: Text("Time left",style:AppTextTheme.small()),
+                                    child: Text(timeLeft[index],style:AppTextTheme.small()),
                                   ),
                                 ],
                               ),
