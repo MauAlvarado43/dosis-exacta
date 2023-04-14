@@ -28,7 +28,7 @@ Future<Database> openDB() async {
       name text not null,
       freq_type text not null,
       freq integer not null,
-      start_hour time not null,
+      start_hour integer not null,
       days integer,
       duration text not null,
       indications text

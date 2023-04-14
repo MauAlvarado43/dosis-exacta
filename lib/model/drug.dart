@@ -10,7 +10,7 @@ class Drug {
   late String name;
   late FREQ_TYPE freq_type;
   late int freq;
-  late DateTime start_hour;
+  late int start_hour;
   int? days;
   late DURATION duration;
   late String? indications;
@@ -20,14 +20,18 @@ class Drug {
   Future save() async {
     Database db = await openDB();
     id = await db.insert(tableName, _toMap());
+    print("se guardó en la bd");
     db.close();
   }
 
   static Future<List<Drug>?> getAll() async {
     Database db = await openDB();
+    print("haciendo la lista");
     List<Map> maps = await db.query(tableName);
+    print("se hizo la lista");
+    print(maps);
     db.close();
-    return maps.map((map) => Drug.fromMap(map)).toList();
+    return maps.map((map) => Drug.fromMap(map)).toList(); //the error is here
   }
 
   static Future<Drug?> get(int id) async {

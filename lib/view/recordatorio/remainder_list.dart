@@ -1,4 +1,4 @@
-import 'package:dosis_exacta/viewmodel/home_vm.dart';
+import 'package:dosis_exacta/viewmodel/drug_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -16,14 +16,22 @@ class RemainderList extends StatefulWidget {
 class _RemainderList extends State<RemainderList> {
 
   bool isLoading = true;
-  HomeVM viewModel = HomeVM();
+  DrugVM viewModel = DrugVM();
   var user;
-  var time = ["8:00","10:15",""].cast<dynamic>();
-  var medicine = ["Paracetamol","Luvox","Buscapina"].cast<dynamic>();
-  var time_left = ["Cada 8 horas","Cada 12 horas","3 veces al dia"].cast<dynamic>();
-  var indications = ["2 tabletas","Media tableta","1 tableta"].cast<dynamic>();
-  onClickAddHand (){
-    Navigator.of(context).pushNamed("/recordatorio/form");
+  var drugs = [];
+
+
+  refreshDrugs() async {
+    var updateDrugs = (await viewModel.getDrugs())!.cast<dynamic>();
+    setState(() {
+      drugs = updateDrugs;
+    });
+    print(drugs.length);
+  }
+
+  onClickAddHand (int index) async{
+    var result = await Navigator.of(context).pushNamed("/recordatorio/form",arguments: {drugs[index]});
+    if(result == true) refreshDrugs();
   }
 
   onClickPhoto() {
@@ -39,12 +47,8 @@ class _RemainderList extends State<RemainderList> {
   }
 
   onClickDelete(int index) async{
-    setState(() {
-      medicine.removeAt(index);
-      time.removeAt(index);
-      time_left.removeAt(index);
-      indications.removeAt(index);
-    });
+    var result = await viewModel.deleteDrug(drugs[index]);
+    if(result == true) refreshDrugs();
   }
 
   @override
@@ -53,18 +57,10 @@ class _RemainderList extends State<RemainderList> {
     super.initState();
 
     WidgetsBinding.instance?.addPostFrameCallback((_) async{
-
-      user = await viewModel.checkExistingUser();
-
-      if(user == null) {
-        Navigator.of(context).pushReplacementNamed("/");
-      }
-      else {
-        setState(() {
-          isLoading = false;
-        });
-      }
-
+      await refreshDrugs();
+      setState(() {
+        isLoading = false;
+      });
     });
 
   }
@@ -94,7 +90,7 @@ class _RemainderList extends State<RemainderList> {
               SizedBox(
                 height: 0.70.sh,
                 child: ListView.builder(
-                  itemCount: medicine.length,
+                  itemCount: drugs.length,
                   itemBuilder: (context,index){
                     return Padding(
                       padding: EdgeInsets.fromLTRB(0.03.sw, 0, 0.03.sw, 0),
@@ -110,13 +106,13 @@ class _RemainderList extends State<RemainderList> {
                               child: Row(
                                 children: [
                                   Expanded(
-                                    child: Text(medicine[index],style:AppTextTheme.large(),maxLines: 3,
+                                    child: Text("nombre",style:AppTextTheme.large(),maxLines: 3,
                                       overflow: TextOverflow.clip,
                                     ),
                                   ),
                                   Container(
                                     width: 50,
-                                    child: Text(time[index],style:AppTextTheme.small()),
+                                    child: Text("time",style:AppTextTheme.small()),
                                   ),
                                 ],
                               ),
@@ -126,7 +122,7 @@ class _RemainderList extends State<RemainderList> {
                               child: Row(
                                 children: [
                                   SizedBox(
-                                    child: Text(time_left[index],style:AppTextTheme.small(),maxLines: 3),
+                                    child: Text("time_left",style:AppTextTheme.small(),maxLines: 3),
                                   )
                                 ],
                               ),
@@ -136,7 +132,7 @@ class _RemainderList extends State<RemainderList> {
                               child: Row(
                                 children: [
                                   Expanded(
-                                    child: Text(indications[index],style:AppTextTheme.small(),maxLines: 3,overflow: TextOverflow.clip,),
+                                    child: Text("indications",style:AppTextTheme.small(),maxLines: 3,overflow: TextOverflow.clip,),
                                   )
                                 ],
                               ),
@@ -152,7 +148,7 @@ class _RemainderList extends State<RemainderList> {
                                           SizedBox(
                                             width: 0.3.sw,
                                             child: ElevatedButton(
-                                                onPressed: onClickAddHand,
+                                                onPressed: (){onClickAddHand(index);},
                                                 style: Styles.button(context, color: Color(0xFF7977AA)),
                                                 child: Text("Editar",style:AppTextTheme.medium(color: Colors.white))
                                             ),

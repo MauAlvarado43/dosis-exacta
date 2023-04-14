@@ -1,4 +1,5 @@
-import 'package:dosis_exacta/viewmodel/home_vm.dart';
+import 'package:dosis_exacta/utils/constants.dart';
+import 'package:dosis_exacta/viewmodel/drug_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,8 +15,9 @@ class RecordatorioForm extends StatefulWidget {
 
 class _RecordatorioForm extends State<RecordatorioForm> {
   bool isLoading = true;
-  HomeVM viewModel = HomeVM();
+  DrugVM viewModel = DrugVM();
   var user;
+  var drug;
   String? _selectedOption;
   String? _selectedHour;
   String? _selectedInterval;
@@ -24,6 +26,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
   String? _selectedDays;
 
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _indicationsController = TextEditingController();
 
   final List<String> _options = ['Dosis Diaria', 'Horas'];
   final List<String> _timesForDay = [
@@ -80,6 +83,76 @@ class _RecordatorioForm extends State<RecordatorioForm> {
   ];
   final List<String> _durations = ['Días', 'Siempre'];
 
+  onClickSave() async {
+    bool result = false;
+
+    //var
+    FREQ_TYPE sendFreq_type;
+    int sendTemp;
+    int sendStart_hour;
+    int? sendDays;
+    DURATION sendDuration;
+    //freq_type
+    if(_selectedOption == "Dosis Diaria"){
+      sendFreq_type = FREQ_TYPE.DAILY;
+    }else{
+      sendFreq_type = FREQ_TYPE.HOUR;
+    }
+    //freq
+    if(_selectedTimes != null){
+      sendTemp = int.parse(_selectedTimes.toString()[0]);
+    }else{
+      sendTemp = 1;
+    }
+    //start_hour
+    if(_selectedHour!=null){
+      String? optionHour =_selectedHour.toString().substring(0, _selectedHour.toString().indexOf(':'));
+      if(_selectedHour.toString().substring(_selectedHour.toString().length - 2)=="am"){
+        sendStart_hour = int.parse(optionHour);
+      }else{
+        sendStart_hour = int.parse(optionHour) + 12;
+      }
+    }else{
+      sendStart_hour = 1;
+    }
+    //days
+    if(_selectedDays!=null){
+      sendDays = int.parse(_selectedDays.toString().replaceAll(RegExp('[A-Za-zí]'), ''));
+    }
+    //duration
+    if(_selectedDuration == "Días"){
+      sendDuration = DURATION.DAILY;
+    }else{
+      sendDuration = DURATION.FOREVER;
+    }
+
+    if(drug == null){
+      result = await viewModel.createDrug(
+          name: _nameController.text,
+          freq_type: sendFreq_type,
+          freq: sendTemp,
+          start_hour: sendStart_hour,
+          days: sendDays,
+          duration: sendDuration,
+          indications: _indicationsController.text);
+    }
+
+    //DELETE
+    print(_nameController.text);
+    print(sendFreq_type);
+    print(sendTemp);
+    print(sendStart_hour);
+    print(sendDays);
+    print(sendDuration);
+    print(_indicationsController.text);
+    //
+
+    if(result){
+      print("se guardó");
+      Navigator.of(context).pop(true);
+    }
+  }
+
   onClickAddHand() {
     Navigator.of(context).pushNamed("/recordatorio/form");
   }
@@ -99,20 +172,26 @@ class _RecordatorioForm extends State<RecordatorioForm> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
-      user = await viewModel.checkExistingUser();
-      if (user == null) {
-        Navigator.of(context).pushReplacementNamed("/");
-      } else {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    });
+
   }
 
   @override
   Widget build(BuildContext context) {
+    Map<String,dynamic>? args =
+        ModalRoute.of(context)!.settings.arguments as Map<String,dynamic>?;
+    if(args != null && args["drug"] != null){
+      setState(() {
+        drug = args["drug"];
+        _nameController.text = drug.name;
+        _selectedOption = drug.freq_type.toString();
+        _selectedTimes = drug.freq.toString();
+        _selectedHour = drug.start_hour.toString();
+        _selectedDays = drug.days.toString();
+        _selectedDuration = drug.duration.toString();
+        _indicationsController.text = drug.indications;
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -471,9 +550,9 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                           ),
                           child: TextField(
                             maxLines: 3,
-                            decoration: InputDecoration(
-                              hintText: "Ingresar indicaciones adicionales",
-                            ),
+                            controller: _indicationsController,
+                            decoration:
+                            Styles.input(context, controller: _indicationsController),
                           ),
                         ),
                       ],
@@ -484,7 +563,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                       child: ElevatedButton(
                           style: Styles.button(context,
                               color: AppColors.secondary()),
-                          onPressed: () {},
+                          onPressed: onClickSave,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
