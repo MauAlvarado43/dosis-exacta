@@ -22,7 +22,7 @@ class Contact {
     Database db = await openDB();
     List<Map> maps = await db.query(tableName);
     db.close();
-    print(maps);
+    //print(maps);
     //print(maps.map((map) => Contact.fromMap(map)).toList());
     return maps.map((map) => Contact.fromMap(map)).toList();
   }

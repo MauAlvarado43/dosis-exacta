@@ -1,5 +1,7 @@
+import 'package:dosis_exacta/utils/constants.dart';
 import 'package:dosis_exacta/viewmodel/drug_vm.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../common/theme.dart';
@@ -19,18 +21,29 @@ class _RemainderList extends State<RemainderList> {
   DrugVM viewModel = DrugVM();
   var user;
   var drugs = [];
-
+  var TimeOrPill = [];
 
   refreshDrugs() async {
     var updateDrugs = (await viewModel.getDrugs())!.cast<dynamic>();
+    var updateTimeOrPill = [];
+
     setState(() {
       drugs = updateDrugs;
+      for(int i=0;i<drugs.length;i++){
+        if(drugs[i].freq_type == FREQ_TYPE.DAILY){
+          updateTimeOrPill.add(drugs[i].freq.toString()+" por día");
+        }else{
+          updateTimeOrPill.add("Cada "+drugs[i].start_hour.toString()+" horas"); //cambiar a interval
+        }
+
+      }
+      TimeOrPill = updateTimeOrPill;
+
     });
-    print(drugs.length);
   }
 
   onClickAddHand (int index) async{
-    var result = await Navigator.of(context).pushNamed("/recordatorio/form",arguments: {drugs[index]});
+    var result = await Navigator.of(context).pushNamed("/recordatorio/form",arguments: {"drug":drugs[index] });
     if(result == true) refreshDrugs();
   }
 
@@ -49,6 +62,7 @@ class _RemainderList extends State<RemainderList> {
   onClickDelete(int index) async{
     var result = await viewModel.deleteDrug(drugs[index]);
     if(result == true) refreshDrugs();
+
   }
 
   @override
@@ -106,13 +120,13 @@ class _RemainderList extends State<RemainderList> {
                               child: Row(
                                 children: [
                                   Expanded(
-                                    child: Text("nombre",style:AppTextTheme.large(),maxLines: 3,
+                                    child: Text(drugs[index].name,style:AppTextTheme.large(),maxLines: 3,
                                       overflow: TextOverflow.clip,
                                     ),
                                   ),
                                   Container(
                                     width: 50,
-                                    child: Text("time",style:AppTextTheme.small()),
+                                    child: Text("Time left",style:AppTextTheme.small()),
                                   ),
                                 ],
                               ),
@@ -122,7 +136,7 @@ class _RemainderList extends State<RemainderList> {
                               child: Row(
                                 children: [
                                   SizedBox(
-                                    child: Text("time_left",style:AppTextTheme.small(),maxLines: 3),
+                                    child: Text(TimeOrPill[index],style:AppTextTheme.small(),maxLines: 3),
                                   )
                                 ],
                               ),
@@ -132,7 +146,7 @@ class _RemainderList extends State<RemainderList> {
                               child: Row(
                                 children: [
                                   Expanded(
-                                    child: Text("indications",style:AppTextTheme.small(),maxLines: 3,overflow: TextOverflow.clip,),
+                                    child: Text(drugs[index].indications,style:AppTextTheme.small(),maxLines: 3,overflow: TextOverflow.clip,),
                                   )
                                 ],
                               ),

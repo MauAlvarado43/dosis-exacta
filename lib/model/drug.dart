@@ -25,10 +25,7 @@ class Drug {
 
   static Future<List<Drug>?> getAll() async {
     Database db = await openDB();
-    print("haciendo la lista");
     List<Map> maps = await db.query(tableName);
-    print("se hizo la lista");
-    print(maps);
     db.close();
     return maps.map((map) => Drug.fromMap(map)).toList(); //the error is here
   }

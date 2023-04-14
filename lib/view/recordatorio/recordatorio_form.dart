@@ -34,7 +34,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
     '2 veces al día',
     '3 veces al día',
     '4 veces al día',
-    '6 veces al día'
+    '5 veces al día'
   ];
   final List<String> _hours = [
     '1:00 am',
@@ -135,6 +135,15 @@ class _RecordatorioForm extends State<RecordatorioForm> {
           days: sendDays,
           duration: sendDuration,
           indications: _indicationsController.text);
+    }else{
+      result = await viewModel.updateDrug(drug,
+          name: _nameController.text,
+          freq_type: sendFreq_type,
+          freq: sendTemp,
+          start_hour: sendStart_hour,
+          days: sendDays,
+          duration: sendDuration,
+          indications: _indicationsController.text);
     }
 
     if(result){
@@ -166,18 +175,51 @@ class _RecordatorioForm extends State<RecordatorioForm> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String,dynamic>? args =
-        ModalRoute.of(context)!.settings.arguments as Map<String,dynamic>?;
+    Map<dynamic, dynamic>? args =
+      ModalRoute.of(context)!.settings.arguments as Map<dynamic, dynamic>?; //the error is here
     if(args != null && args["drug"] != null){
       setState(() {
         drug = args["drug"];
+        if(_selectedOption == null){
+          if(drug.freq_type == FREQ_TYPE.DAILY){
+            _selectedOption = _options[0];
+          }else{
+            _selectedOption = _options[1];
+          }
+        }
+        //times
+        if(_selectedTimes == null){
+          _selectedTimes = _timesForDay[drug.freq - 1];
+        }
+        //start_hour
+        if(_selectedHour == null){
+          _selectedHour = _hours[drug.start_hour - 1];
+        }
+        //name
         _nameController.text = drug.name;
-        _selectedOption = drug.freq_type.toString();
-        _selectedTimes = drug.freq.toString();
-        _selectedHour = drug.start_hour.toString();
-        _selectedDays = drug.days.toString();
-        _selectedDuration = drug.duration.toString();
+
+        //days
+        if(_selectedDays == null){
+          if(drug.days == null){
+            _selectedDays = _days[0];
+          }else{
+            _selectedDays = _days[drug.days - 1];
+          }
+        }
+        //duration
+        if(_selectedDuration == null){
+          if(drug.duration == DURATION.DAILY){
+            _selectedDuration = _durations[0];
+          }else{
+            _selectedDuration = _durations[1];
+          }
+        }
+        //indications
         _indicationsController.text = drug.indications;
+        //intervals
+        if(_selectedInterval == null){
+          _selectedInterval = _intervals[0];
+        }
       });
     }
 
