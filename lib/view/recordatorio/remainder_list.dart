@@ -124,16 +124,14 @@ class _RemainderList extends State<RemainderList> {
                             Padding(
                               padding: EdgeInsets.fromLTRB(0.1.sw, 0.02.sh, 0.1.sw, 0.0.sh),
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: Text(drugs[index].name,style:AppTextTheme.large(),maxLines: 3,
                                       overflow: TextOverflow.clip,
                                     ),
                                   ),
-                                  Container(
-                                    width: 50,
-                                    child: Text(timeLeft[index],style:AppTextTheme.small()),
-                                  ),
+                                  Text(timeLeft[index],style:AppTextTheme.small())
                                 ],
                               ),
                             ),
@@ -158,36 +156,30 @@ class _RemainderList extends State<RemainderList> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(0.1.sw, 0.005.sh, 0.1.sw, 0.0.sh),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                      padding:EdgeInsets.fromLTRB(0.003.sw, 0.005.sh, 0.0.sw, 0.0.sh),
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 0.3.sw,
-                                            child: ElevatedButton(
-                                                onPressed: (){onClickAddHand(index);},
-                                                style: Styles.button(context, color: Color(0xFF7977AA)),
-                                                child: Text("Editar",style:AppTextTheme.medium(color: Colors.white))
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 0.08.sw,
-                                          ),
-                                          SizedBox(
-                                            width: 0.3.sw,
-                                            child: ElevatedButton(
-                                                onPressed: (){onClickDelete(index);},
-                                                style: Styles.button(context, color: Color(0xFFF44336)),
-                                                child: Text("Eliminar",style:AppTextTheme.medium(color: Colors.white))
-                                            ),
-                                          ),
-                                        ],
+                              padding: EdgeInsets.fromLTRB(0.1.sw, 0.005.sh, 0.1.sw, 0.02.sh),
+                              child: Padding(
+                                padding:EdgeInsets.fromLTRB(0.003.sw, 0.005.sh, 0.0.sw, 0.0.sh),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SizedBox(
+                                      width: 0.3.sw,
+                                      child: ElevatedButton(
+                                          onPressed: (){onClickAddHand(index);},
+                                          style: Styles.button(context, color: Color(0xFF7977AA)),
+                                          child: Text("Editar",style:AppTextTheme.medium(color: Colors.white))
                                       ),
-                                  ),
-                                ],
+                                    ),
+                                    SizedBox(
+                                      width: 0.3.sw,
+                                      child: ElevatedButton(
+                                          onPressed: (){onClickDelete(index);},
+                                          style: Styles.button(context, color: Color(0xFFF44336)),
+                                          child: Text("Eliminar",style:AppTextTheme.medium(color: Colors.white))
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             )
                           ],

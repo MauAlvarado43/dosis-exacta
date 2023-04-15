@@ -590,7 +590,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                     ),
                     SizedBox(height: 0.02.sh),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
+                      padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0.03.sh),
                       child: ElevatedButton(
                           style: Styles.button(context,
                               color: AppColors.secondary()),
