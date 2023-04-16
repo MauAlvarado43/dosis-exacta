@@ -40,7 +40,9 @@ class DrugVM {
       await RemainderVM.makeNextRemainder(drug, cancel: true);
 
       return true;
-    }catch(e){
+    }catch(e, stacktrace){
+      print(e);
+      print(stacktrace);
       return false;
     }
 

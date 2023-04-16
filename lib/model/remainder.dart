@@ -9,9 +9,9 @@ class Remainder {
   int? id;
   late bool ingested;
   late DateTime date;
-  late Drug drug;
+  Drug? drug;
 
-  Remainder({ required this.ingested, required this.date, required this.drug });
+  Remainder({ required this.ingested, required this.date });
 
   Future save() async {
     Database db = await openDB();
@@ -32,15 +32,30 @@ class Remainder {
 
     db.close();
 
-    return maps.map((map) => Remainder.fromMap(map)).toList();
+    List<Remainder> remainders = [];
+    for(int i = 0; i < maps.length; i++) {
+      Remainder remainder = await Remainder.fromMap(maps[i]);
+      remainders.add(remainder);
+    }
+
+    return remainders;
 
   }
 
   static Future<List<Remainder>?> getAll() async {
+
     Database db = await openDB();
     List<Map> maps = await db.query(tableName);
     db.close();
-    return maps.map((map) => Remainder.fromMap(map)).toList();
+
+    List<Remainder> remainders = [];
+    for(int i = 0; i < maps.length; i++) {
+      Remainder remainder = await Remainder.fromMap(maps[i]);
+      remainders.add(remainder);
+    }
+
+    return remainders;
+
   }
 
   static Future<Remainder?> get(int id) async {
@@ -78,17 +93,18 @@ class Remainder {
     var map = <String, Object?> {
       "ingested": ingested ? 1 : 0,
       "date": date.toIso8601String(),
-      "drug_id": drug.id,
     };
+    if(drug != null) map["drug_id"] = drug?.id;
     if(id != null) map["id"] = id;
     return map;
   }
 
-  Remainder.fromMap(Map<dynamic, dynamic> map) {
-    id = map["id"] as int;
-    ingested = (map["ingested"] as int) == 1;
-    date = DateTime.parse(map["date"]);
-    Drug.get(map["drug_id"]).then((value) => drug = value!);
+  static fromMap(Map<dynamic, dynamic> map) async {
+    Remainder remainder = Remainder(ingested: (map["ingested"] as int) == 1, date: DateTime.parse(map["date"]));
+    Drug? drug = await Drug.get(map["drug_id"]);
+    remainder.id = map["id"] as int;
+    if(drug != null) remainder.drug = drug;
+    return remainder;
   }
 
 }

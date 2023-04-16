@@ -30,21 +30,30 @@ class _RemainderList extends State<RemainderList> {
     var updateTimeLeft = [];
 
     setState(() {
+
       drugs = updateDrugs;
-      for(int i=0;i<drugs.length;i++){
-        if(drugs[i].freq_type == FREQ_TYPE.DAILY){
-          updateTimeOrPill.add(drugs[i].freq.toString()+" por día");
-        }else{
-          updateTimeOrPill.add("Cada "+drugs[i].start_hour.toString()+" horas"); //cambiar a interval
+
+      for(int i = 0; i < drugs.length ; i++) {
+
+        if(drugs[i].freq_type == FREQ_TYPE.DAILY) {
+          updateTimeOrPill.add(drugs[i].freq.toString() + " por día");
         }
-        if(drugs[i].duration == DURATION.DAILY){
-          updateTimeLeft.add("Por "+drugs[i].days.toString()+" días");
-        }else{
+        else{
+          updateTimeOrPill.add("Cada " + drugs[i].freq.toString() + " horas"); //cambiar a interval
+        }
+
+        if(drugs[i].duration == DURATION.DAILY) {
+          updateTimeLeft.add("Por " + drugs[i].days.toString() + " días");
+        }
+        else{
           updateTimeLeft.add("Sin tiempo límite");
         }
+
       }
+
       TimeOrPill = updateTimeOrPill;
       timeLeft = updateTimeLeft;
+
     });
   }
 

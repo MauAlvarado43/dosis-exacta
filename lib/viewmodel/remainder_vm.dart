@@ -13,7 +13,7 @@ class RemainderVM {
 
   static cancelPreviousRemainders(Drug drug) async {
     List<Remainder>? remainders = await Remainder.getActive();
-    if (remainders != null) {
+    if(remainders != null) {
       for (int i = 0; i < remainders.length; i++) {
         remainders[i].ingested = true;
         await remainders[i].update();
@@ -22,6 +22,7 @@ class RemainderVM {
   }
 
   static makeNextRemainder(Drug drug, { bool cancel = false }) async {
+
     if (cancel) await cancelPreviousRemainders(drug);
 
     DateTime now = DateTime.now();
@@ -63,12 +64,11 @@ class RemainderVM {
       date = DateTime(now.year, now.month, now.day + 1, nextTime);
     else
       date = DateTime(now.year, now.month, now.day, nextTime);
-    
-    date = DateTime(2023, 4, 16, 20, 10);
-    print(date);
 
     await createNotification(drug, date);
-    Remainder remainder = Remainder(ingested: false, date: date, drug: drug);
+
+    Remainder remainder = Remainder(ingested: false, date: date);
+    remainder.drug = drug;
     await remainder.save();
 
     return remainder;
@@ -126,7 +126,6 @@ class RemainderVM {
         for(int i = 0; i < remainders.length; i++) {
 
           var diff = DateTime.now().difference(remainders[i].date);
-          print(diff);
 
           if(diff.isNegative) continue;
           if(diff.inMinutes > 15 && diff.inMinutes < 20) {
@@ -135,7 +134,7 @@ class RemainderVM {
             if(contacts != null) {
               for(int j = 0; j < contacts.length; j++)
                 await HttpHandler().POST(API_URL + "/send_email", {
-                "subject": users.first.name + " - " + remainders[i].drug.name,
+                "subject": users.first.name + " - " + remainders[i].drug!.name,
                 "body": "Aún no ha ingerido su dosis, por favor atiende sus necesidades.",
                 "target": contacts[j].email
                 });

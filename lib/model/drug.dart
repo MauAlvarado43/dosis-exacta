@@ -43,6 +43,7 @@ class Drug {
 
     db.close();
 
+    if(maps.isEmpty) return null;
     return maps.map((map) => Drug.fromMap(map)).toList().first;
 
   }
