@@ -35,7 +35,7 @@ class _RemainderList extends State<RemainderList> {
         if(drugs[i].freq_type == FREQ_TYPE.DAILY){
           updateTimeOrPill.add(drugs[i].freq.toString()+" por día");
         }else{
-          updateTimeOrPill.add("Cada "+drugs[i].start_hour.toString()+" horas"); //cambiar a interval
+          updateTimeOrPill.add("Cada "+drugs[i].freq.toString()+" horas"); //cambiar a interval
         }
         if(drugs[i].duration == DURATION.DAILY){
           updateTimeLeft.add("Por "+drugs[i].days.toString()+" días");
