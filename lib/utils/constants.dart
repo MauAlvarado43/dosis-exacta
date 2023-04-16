@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+const API_URL = "http://192.168.100.20:8000/api";
+
 enum FREQ_TYPE { HOUR, DAILY }
 
 extension ParseStringFreq on FREQ_TYPE {

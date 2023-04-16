@@ -39,7 +39,7 @@ Future<Database> openDB() async {
     create table if not exists remainder (
       id integer primary key autoincrement,
       ingested integer not null,
-      date datetime not null,
+      date text not null,
       drug_id integer not null,
       foreign key(drug_id) references drug(id) on delete no action on update cascade
     )

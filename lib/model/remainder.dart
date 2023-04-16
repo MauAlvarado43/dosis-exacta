@@ -2,6 +2,8 @@ import 'package:sqflite/sqflite.dart';
 import 'database.dart';
 import 'drug.dart';
 
+const String tableName = "remainder";
+
 class Remainder {
 
   int? id;
@@ -15,6 +17,23 @@ class Remainder {
     Database db = await openDB();
     id = await db.insert(tableName, _toMap());
     db.close();
+  }
+
+  static Future<List<Remainder>?> getActive() async {
+
+    Database db = await openDB();
+
+    List<Map> maps = await db.query(
+        tableName,
+        columns: ["id", "ingested", "date", "drug_id"],
+        where: "ingested = ?",
+        whereArgs: [0]
+    );
+
+    db.close();
+
+    return maps.map((map) => Remainder.fromMap(map)).toList();
+
   }
 
   static Future<List<Remainder>?> getAll() async {
@@ -57,8 +76,8 @@ class Remainder {
 
   Map<String, Object?> _toMap() {
     var map = <String, Object?> {
-      "ingested": ingested,
-      "date": date,
+      "ingested": ingested ? 1 : 0,
+      "date": date.toIso8601String(),
       "drug_id": drug.id,
     };
     if(id != null) map["id"] = id;
@@ -68,7 +87,7 @@ class Remainder {
   Remainder.fromMap(Map<dynamic, dynamic> map) {
     id = map["id"] as int;
     ingested = (map["ingested"] as int) == 1;
-    date = map["date"];
+    date = DateTime.parse(map["date"]);
     Drug.get(map["drug_id"]).then((value) => drug = value!);
   }
 

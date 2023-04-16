@@ -44,7 +44,7 @@ class HttpHandler extends HttpHandlerCore {
     dynamic responseJson;
 
     try{
-      var response = await post(formatURL(url), body: body)
+      var response = await post(formatURL(url), body: jsonEncode(body), headers: {"Content-Type": "application/json"})
           .timeout(const Duration(minutes: 2));
       responseJson =  manageResponse(response);
     }

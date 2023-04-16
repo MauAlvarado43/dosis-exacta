@@ -37,30 +37,30 @@ class _RecordatorioForm extends State<RecordatorioForm> {
     '5 veces al día'
   ];
   final List<String> _hours = [
-    '1:00 am',
-    '2:00am',
-    '3:00am',
-    '4:00am',
-    '5:00am',
-    '6:00am',
-    '7:00am',
-    '8:00am',
-    '9:00am',
-    '10:00am',
-    '11:00am',
-    '12:00pm',
-    '1:00pm',
-    '2:00pm',
-    '3:00pm',
-    '4:00pm',
-    '5:00pm',
-    '6:00pm',
-    '7:00pm',
-    '8:00pm',
-    '9:00pm',
-    '10:00pm',
-    '11:00pm',
-    '12:00am'
+    '00:00 am',
+    '01:00 am',
+    '02:00 am',
+    '03:00 am',
+    '04:00 am',
+    '05:00 am',
+    '06:00 am',
+    '07:00 am',
+    '08:00 am',
+    '09:00 am',
+    '010:00 am',
+    '011:00 am',
+    '12:00 pm',
+    '01:00 pm',
+    '02:00 pm',
+    '03:00 pm',
+    '04:00 pm',
+    '05:00 pm',
+    '06:00 pm',
+    '07:00 pm',
+    '08:00 pm',
+    '09:00 pm',
+    '10:00 pm',
+    '11:00 pm',
   ];
   final List<String> _days = [
     '1 día',
@@ -78,7 +78,6 @@ class _RecordatorioForm extends State<RecordatorioForm> {
     '4 horas',
     '8 horas',
     '12 horas',
-    '16 horas',
     '24 horas'
   ];
   final List<String> _durations = ['Días', 'Siempre'];
@@ -99,19 +98,23 @@ class _RecordatorioForm extends State<RecordatorioForm> {
       sendFreq_type = FREQ_TYPE.HOUR;
     }
     //freq
-    if(_selectedTimes != null){
-      sendTemp = int.parse(_selectedTimes.toString()[0]);
-    }else{
-      sendTemp = 1;
+    if(sendFreq_type == FREQ_TYPE.DAILY) {
+      if(_selectedTimes != null){
+        sendTemp = int.parse(_selectedTimes.toString()[0]);
+      } else{
+        sendTemp = 1;
+      }
+    }
+    else {
+      if (_selectedInterval != null) {
+        sendTemp = int.parse(_selectedInterval.toString().split(" ")[0]);
+      } else {
+        sendTemp = 1;
+      }
     }
     //start_hour
     if(_selectedHour!=null){
-      String? optionHour =_selectedHour.toString().substring(0, _selectedHour.toString().indexOf(':'));
-      if(_selectedHour.toString().substring(_selectedHour.toString().length - 2)=="am"){
-        sendStart_hour = int.parse(optionHour);
-      }else{
-        sendStart_hour = int.parse(optionHour) + 12;
-      }
+      sendStart_hour = _hours.indexOf(_selectedHour!);
     }else{
       sendStart_hour = 1;
     }
@@ -149,6 +152,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
     if(result){
       Navigator.of(context).pop(true);
     }
+
   }
 
   onClickAddHand() {
@@ -177,6 +181,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
   Widget build(BuildContext context) {
     Map<dynamic, dynamic>? args =
       ModalRoute.of(context)!.settings.arguments as Map<dynamic, dynamic>?; //the error is here
+
     if(args != null && args["drug"] != null){
       setState(() {
         drug = args["drug"];
@@ -187,13 +192,21 @@ class _RecordatorioForm extends State<RecordatorioForm> {
             _selectedOption = _options[1];
           }
         }
-        //times
-        if(_selectedTimes == null){
-          _selectedTimes = _timesForDay[drug.freq - 1];
+        //freq
+
+        if(_selectedTimes == null && _selectedInterval == null) {
+          if(drug.freq_type == FREQ_TYPE.DAILY) {
+            _selectedTimes = _timesForDay[drug.freq - 1];
+          }
+          else {
+            int idx = _intervals.map((e) => e.split(" ")[0]).toList().indexOf(drug.freq.toString());
+            _selectedInterval = _intervals[idx];
+          }
         }
+
         //start_hour
         if(_selectedHour == null){
-          _selectedHour = _hours[drug.start_hour - 1];
+          _selectedHour = _hours[drug.start_hour];
         }
         //name
         _nameController.text = drug.name;
@@ -216,10 +229,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
         }
         //indications
         _indicationsController.text = drug.indications;
-        //intervals
-        if(_selectedInterval == null){
-          _selectedInterval = _intervals[0];
-        }
+
       });
     }
 
@@ -615,7 +625,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
             ),
             SizedBox(height: 0.04.sh),
             Padding(
-              padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
+              padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0.04.sh),
               child: ElevatedButton(
                   onPressed: onClickReturn,
                   style: Styles.button(context, color: AppColors.primary()),

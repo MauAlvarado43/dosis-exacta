@@ -1,5 +1,6 @@
 import 'package:dosis_exacta/model/drug.dart';
 import 'package:dosis_exacta/utils/constants.dart';
+import 'package:dosis_exacta/viewmodel/remainder_vm.dart';
 
 class DrugVM {
 
@@ -9,14 +10,13 @@ class DrugVM {
 
   Future<bool> createDrug({required String name, required FREQ_TYPE freq_type, required int freq, required int start_hour,int? days ,required DURATION duration,String? indications}) async {
 
-    Drug drug = Drug(name: name,freq_type: freq_type,freq: freq,start_hour: start_hour,duration: duration);
-
+    Drug drug = Drug(name: name, freq_type: freq_type, freq: freq, start_hour: start_hour, duration: duration);
     drug.days = days;
-
     drug.indications = indications;
 
     try {
       await drug.save();
+
       return true;
     }catch(e){
       return false;
@@ -24,7 +24,7 @@ class DrugVM {
 
   }
 
-  Future<bool> updateDrug(Drug drug,{name,freq_type,freq,start_hour,days,duration,indications}) async {
+  Future<bool> updateDrug(Drug drug,{name, freq_type, int? freq, int? start_hour, days, duration, indications}) async {
 
     if(name != null) drug.name = name;
     if(freq_type != null) drug.freq_type = freq_type;
@@ -35,7 +35,10 @@ class DrugVM {
     if(indications != null) drug.indications = indications;
 
     try {
+
       await drug.update();
+      await RemainderVM.makeNextRemainder(drug, cancel: true);
+
       return true;
     }catch(e){
       return false;

@@ -35,7 +35,7 @@ class Drug {
     Database db = await openDB();
 
     List<Map> maps = await db.query(
-        "SELECT * FROM " + tableName,
+        tableName,
         columns: ["id", "name", "freq_type", "freq", "start_hour", "days", "duration", "indications"],
         where: "id = ?",
         whereArgs: [id]
