@@ -77,8 +77,8 @@ class StateRemainderPhoto extends State<RemainderPhoto> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget> [
             Text(
-                "Fotografia",
-                style: AppTextTheme.medium(color: Colors.white)
+              "Fotografia",
+              style: AppTextTheme.medium(color: Colors.white)
             )
           ],
         ),
@@ -105,7 +105,7 @@ class StateRemainderPhoto extends State<RemainderPhoto> {
             await Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => RemainderPhotoResults(
-                  imagePath: image.path,
+                  image: image,
                 ),
               ),
             );

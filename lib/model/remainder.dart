@@ -42,6 +42,34 @@ class Remainder {
 
   }
 
+  static Future<List<Remainder>?> getSamePeriodAndDrug(DateTime date, Drug drug) async {
+
+    print(date.toIso8601String());
+    print(drug.id);
+
+    Database db = await openDB();
+
+    List<Map> maps = await db.query(
+        tableName,
+        columns: ["id", "ingested", "date", "drug_id"],
+        where: "date = ? AND drug_id = ?",
+        whereArgs: [date.toIso8601String(), drug.id]
+    );
+
+    db.close();
+
+    List<Remainder> remainders = [];
+    for(int i = 0; i < maps.length; i++) {
+      Remainder remainder = await Remainder.fromMap(maps[i]);
+      remainders.add(remainder);
+    }
+
+    print(remainders);
+
+    return remainders;
+
+  }
+
   static Future<List<Remainder>?> getAll() async {
 
     Database db = await openDB();

@@ -1,4 +1,5 @@
 
+import 'package:camera/camera.dart';
 import 'package:dosis_exacta/model/contact.dart';
 import 'package:dosis_exacta/model/remainder.dart';
 import 'package:dosis_exacta/utils/http_handler.dart';
@@ -10,6 +11,26 @@ import '../model/user.dart';
 import '../utils/constants.dart';
 
 class RemainderVM {
+
+  Future<List<Drug>> uploadPhoto(XFile image) async {
+
+    var bytes = await image.readAsBytes();
+    var response = await HttpHandler().UPLOAD_FILE(API_URL + "/analyze_photo", bytes: bytes.buffer.asByteData());
+    print(response.data);
+
+    return [];
+
+  }
+
+  Future<List<Remainder>?> getActiveRemainders() async {
+    return await Remainder.getActive();
+  }
+
+  checkIngestedRemainder(Remainder remainder) async {
+    remainder.ingested = true;
+    await remainder.update();
+    if(remainder.drug != null) makeNextRemainder(remainder.drug!);
+  }
 
   static cancelPreviousRemainders(Drug drug) async {
     List<Remainder>? remainders = await Remainder.getActive();
@@ -23,8 +44,6 @@ class RemainderVM {
 
   static makeNextRemainder(Drug drug, { bool cancel = false }) async {
 
-    if (cancel) await cancelPreviousRemainders(drug);
-
     DateTime now = DateTime.now();
     int hour = now.hour;
 
@@ -32,8 +51,7 @@ class RemainderVM {
 
     if (drug.freq_type == FREQ_TYPE.HOUR) {
       times = [drug.start_hour];
-      for (int i = drug.start_hour + drug.freq; i % 24 != drug.start_hour;
-      i += drug.freq)
+      for (int i = drug.start_hour + drug.freq; i % 24 != drug.start_hour; i += drug.freq)
         times.add(i % 24);
     }
     else {
@@ -53,17 +71,34 @@ class RemainderVM {
     int diff = diffArr[idx];
     int nextTime = -1;
 
-    if (diff <= 0)
+    if(diff <= 0)
       nextTime = times[(idx + 1) % times.length];
     else
       nextTime = times[idx];
 
     DateTime date;
 
-    if (nextTime < hour)
+    if(nextTime < hour)
       date = DateTime(now.year, now.month, now.day + 1, nextTime);
     else
       date = DateTime(now.year, now.month, now.day, nextTime);
+
+    if(cancel) await cancelPreviousRemainders(drug);
+    else {
+
+      List<Remainder>? remainders = await Remainder.getSamePeriodAndDrug(date, drug);
+      if(remainders != null && remainders.isNotEmpty) {
+
+        nextTime = times[(idx + 1) % times.length];
+
+        if(nextTime < hour)
+          date = DateTime(now.year, now.month, now.day + 1, nextTime);
+        else
+          date = DateTime(now.year, now.month, now.day, nextTime);
+
+      }
+
+    }
 
     await createNotification(drug, date);
 

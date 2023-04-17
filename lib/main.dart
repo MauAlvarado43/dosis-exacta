@@ -11,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeService();
+  // await initializeService();
   runApp(const App());
 }
 
@@ -48,7 +48,6 @@ Future<void> initializeService() async {
   );
 
 }
-
 
 Future<void> onStart(ServiceInstance service) async {
   Timer.periodic(const Duration(minutes: 10), (timer) async {

@@ -1,6 +1,9 @@
 import 'dart:ui';
 
+import 'package:camera/camera.dart';
+import 'package:dosis_exacta/utils/http_handler.dart';
 import 'package:dosis_exacta/viewmodel/home_vm.dart';
+import 'package:dosis_exacta/viewmodel/remainder_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -10,16 +13,19 @@ import 'dart:io';
 
 
 class RemainderPhotoResults extends StatefulWidget {
-  final String imagePath;
-  const RemainderPhotoResults({Key? key, required this.imagePath}) : super(key: key);
+
+  final XFile image;
+  const RemainderPhotoResults({Key? key, required this.image}) : super(key: key);
 
   @override
   State<RemainderPhotoResults> createState() => StateRemainderPhotoResults();
+
 }
 
 class StateRemainderPhotoResults extends State<RemainderPhotoResults> {
+
   bool isLoading = true;
-  HomeVM viewModel = HomeVM();
+  RemainderVM viewModel = RemainderVM();
   var user;
 
   // Guarda los medicamentos y regresa
@@ -42,11 +48,15 @@ class StateRemainderPhotoResults extends State<RemainderPhotoResults> {
 
   @override
   void initState() {
+
     super.initState();
+
     WidgetsBinding.instance?.addPostFrameCallback(
         (_) async {
-          user = await viewModel.checkExistingUser();
-          if(user == null) {
+
+          var response = await viewModel.uploadPhoto(widget.image);
+
+          if(response.isNotEmpty) {
             Navigator.of(context).pushReplacementNamed("/");
           }
           else {
@@ -56,8 +66,10 @@ class StateRemainderPhotoResults extends State<RemainderPhotoResults> {
                 }
             );
           }
+
         }
     );
+
   }
 
   @override
@@ -70,8 +82,8 @@ class StateRemainderPhotoResults extends State<RemainderPhotoResults> {
             mainAxisAlignment: MainAxisAlignment.center, // Centrado horizontalmente
             children: <Widget> [ // Contiene
               Text( // Texto
-                  "Fotografia", // Cadena de contenido
-                  style: AppTextTheme.medium(color: Colors.white) // Formato color blanco
+                "Fotografia", // Cadena de contenido
+                style: AppTextTheme.medium(color: Colors.white) // Formato color blanco
               )
             ],
           ),
@@ -84,7 +96,7 @@ class StateRemainderPhotoResults extends State<RemainderPhotoResults> {
               SizedBox(height: 0.1.sw), // Espacio en blanco vertical
               Padding( // Contenedor con relleno
                 padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0), // Configura el relleno de los extremos laterales
-                child: Image.file(File(widget.imagePath)), // Image.asset("assets/images/receta.jpeg"), // Muestra la imagen de la receta
+                child: Image.file(File(widget.image.path)), // Image.asset("assets/images/receta.jpeg"), // Muestra la imagen de la receta
               ),
               SizedBox(height: 0.05.sh),
               Padding( // Contenedor con relleno

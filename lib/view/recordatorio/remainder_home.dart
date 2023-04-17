@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:dosis_exacta/viewmodel/home_vm.dart';
+import 'package:dosis_exacta/viewmodel/remainder_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -19,41 +20,17 @@ class RemainderHome extends StatefulWidget {
 class _RemainderHome extends State<RemainderHome> {
 
   bool isLoading = true;
-  HomeVM viewModel = HomeVM();
-  var user;
-
-
-  var time = ["18:15","1/3","19:23"];
-  var medicine = ["Paracetamol","Luvox","Buscapina"];
-  var time_left = ["Dentro de 2 horas","en 10 minutos","Dentro de 3 minutos"];
-  var indication = ["2 tabletas","Media tableta","1 tableta"];
-
-  var shown = [0,0,0];
-
-  onClickEdit() {
-    Navigator.of(context).pushNamed("/recordatorio/list");
-  }
+  RemainderVM viewModel = RemainderVM();
+  var remainders;
 
   onClickReturn() {
     Navigator.of(context).pop();
   }
 
-  onClickingested(int index){
-    shown[index] = 1;
-  }
-
-  refreshRemainders() async{
-    setState(() {
-      for(var i = 0; i<medicine.length;i++){
-        if(shown[i]==1){
-          medicine.removeAt(i);
-          time.removeAt(i);
-          time_left.removeAt(i);
-          indication.removeAt(i);
-          shown.removeAt(i);
-        }
-      }
-    });
+  onClickIngested(int index) async {
+    viewModel.checkIngestedRemainder(remainders[index]);
+    remainders = await viewModel.getActiveRemainders();
+    setState(() { remainders = remainders; });
   }
 
   @override
@@ -63,9 +40,9 @@ class _RemainderHome extends State<RemainderHome> {
 
     WidgetsBinding.instance?.addPostFrameCallback((_) async{
 
-      user = await viewModel.checkExistingUser();
+      remainders = await viewModel.getActiveRemainders();
 
-      if(user == null) {
+      if(remainders == null) {
         Navigator.of(context).pushReplacementNamed("/");
       }
       else {
@@ -88,8 +65,8 @@ class _RemainderHome extends State<RemainderHome> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  "Recordatorio",
-                  style: AppTextTheme.medium(color: Colors.white)
+                "Recordatorio",
+                style: AppTextTheme.medium(color: Colors.white)
               )
             ],
           ),
@@ -103,7 +80,7 @@ class _RemainderHome extends State<RemainderHome> {
               SizedBox(
                 height: 0.70.sh,
                 child: ListView.builder(
-                  itemCount: medicine.length,
+                  itemCount: remainders != null ? remainders.length : 0,
                   itemBuilder: (context,index){
                   return Padding(
                     padding: EdgeInsets.fromLTRB(0.03.sw, 0, 0.03.sw, 0),
@@ -117,15 +94,34 @@ class _RemainderHome extends State<RemainderHome> {
                           Padding(
                             padding: EdgeInsets.fromLTRB(0.1.sw, 0.02.sh, 0.1.sw, 0.0.sh),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  child: Text(medicine[index],style:AppTextTheme.large(),maxLines: 3,
+                                  child: Text(remainders[index].drug.name,style:AppTextTheme.large(),maxLines: 3,
                                     overflow: TextOverflow.clip,
                                   ),
                                 ),
                                 Container(
-                                  width: 50,
-                                  child: Text(time[index],style:AppTextTheme.small()),
+                                  child: Text((){
+
+                                    int hour = remainders[index].date.hour;
+                                    int minute = remainders[index].date.minute;
+                                    String suffix = "";
+
+                                    if(hour < 12) {
+                                      suffix = "a.m.";
+                                    }
+                                    else {
+                                      hour -= 12;
+                                      suffix = "p.m.";
+                                    }
+
+                                    String date = (hour < 10) ? "0" + hour.toString() + ":" : hour.toString() + ":";
+                                    if(minute < 10) date = (minute < 10) ? date + "0" + minute.toString() : date + minute.toString();
+
+                                    return date + " " + suffix;
+
+                                  }(),style:AppTextTheme.small()),
                                 ),
                               ],
                             ),
@@ -135,7 +131,84 @@ class _RemainderHome extends State<RemainderHome> {
                             child: Row(
                               children: [
                                 SizedBox(
-                                  child: Text(time_left[index],style:AppTextTheme.small(),maxLines: 3),
+                                  child: Text(
+                                    (){
+
+                                      var difference = DateTime.now().difference(remainders[index].date);
+                                      String preffix = "";
+                                      String amount = "";
+                                      String suffix = "";
+
+                                      if(difference.isNegative) {
+
+                                        if(difference.inMinutes.abs() >= 60) {
+
+                                          amount = difference.inHours.abs().toString();
+
+                                          if(difference.inHours.abs() > 1) {
+                                            preffix = "Faltan "; suffix = " horas";
+                                          }
+                                          else {
+                                            preffix = "Falta "; suffix = " hora";
+                                          }
+
+                                        }
+                                        else {
+
+                                          amount = difference.inMinutes.abs().toString();
+
+
+                                          if(difference.inMinutes.abs() > 1) {
+                                            preffix = "Faltan "; suffix = " minutos";
+                                          }
+                                          else if(difference.inMinutes.abs() == 1) {
+                                            preffix = "Falta "; suffix = " minuto";
+                                          }
+                                          else {
+                                            preffix = "Justo Ahora";
+                                          }
+
+                                        }
+
+                                      }
+                                      else {
+
+                                        if(difference.inMinutes.abs() >= 60) {
+
+                                          amount = difference.inHours.toString();
+
+                                          if(difference.inHours.abs() > 1) {
+                                            preffix = "Hace "; suffix = " horas";
+                                          }
+                                          else {
+                                            preffix = "Hace "; suffix = " hora";
+                                          }
+
+                                        }
+                                        else {
+
+                                          amount = difference.inMinutes.abs().toString();
+
+                                          if(difference.inMinutes.abs() > 1) {
+                                            preffix = "Hace "; suffix = " minutos";
+                                          }
+                                          else if(difference.inMinutes.abs() == 1) {
+                                            preffix = "Hace "; suffix = " minuto";
+                                          }
+                                          else {
+                                            preffix = "Justo Ahora";
+                                          }
+
+                                        }
+
+                                      }
+
+                                      return preffix + amount + suffix;
+
+                                    }(),
+                                    style: AppTextTheme.small(color: DateTime.now().difference(remainders[index].date).isNegative ? Colors.black : Colors.redAccent),
+                                    maxLines: 3
+                                  ),
                                 )
                               ],
                             ),
@@ -145,19 +218,18 @@ class _RemainderHome extends State<RemainderHome> {
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: Text(indication[index],style:AppTextTheme.small(),maxLines: 3,overflow: TextOverflow.clip,),
+                                  child: Text(remainders[index].drug.indications, style:AppTextTheme.small(), maxLines: 3, overflow: TextOverflow.clip),
                                 )
                               ],
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.fromLTRB(0.1.sw, 0.005.sh, 0.1.sw, 0.0.sh),
+                            padding: EdgeInsets.fromLTRB(0.1.sw, 0.005.sh, 0.1.sw, 0.02.sh),
                             child: SizedBox(
                               width: 0.55.sw,
                               child: ElevatedButton(
                                 onPressed: (){
-                                  onClickingested(index);
-                                  refreshRemainders();
+                                  onClickIngested(index);
                                 },
                                 style: Styles.button(context, color: Color(0xFF44BBA4)),
                                 child: Text("Dosis ingerida",style:AppTextTheme.medium(color: Colors.white)),
