@@ -29,7 +29,7 @@ class RemainderVM {
   checkIngestedRemainder(Remainder remainder) async {
     remainder.ingested = true;
     await remainder.update();
-    if(remainder.drug != null) makeNextRemainder(remainder.drug!);
+    makeNextRemainder(remainder.drug);
   }
 
   static cancelPreviousRemainders(Drug drug) async {
@@ -102,8 +102,7 @@ class RemainderVM {
 
     await createNotification(drug, date);
 
-    Remainder remainder = Remainder(ingested: false, date: date);
-    remainder.drug = drug;
+    Remainder remainder = Remainder(ingested: false, date: date, drug: drug);
     await remainder.save();
 
     return remainder;
@@ -169,7 +168,7 @@ class RemainderVM {
             if(contacts != null) {
               for(int j = 0; j < contacts.length; j++)
                 await HttpHandler().POST(API_URL + "/send_email", {
-                "subject": users.first.name + " - " + remainders[i].drug!.name,
+                "subject": users.first.name + " - " + remainders[i].drug.name,
                 "body": "Aún no ha ingerido su dosis, por favor atiende sus necesidades.",
                 "target": contacts[j].email
                 });

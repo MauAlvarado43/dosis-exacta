@@ -16,7 +16,7 @@ class DrugVM {
 
     try {
       await drug.save();
-
+      await RemainderVM.makeNextRemainder(drug);
       return true;
     }catch(e){
       return false;

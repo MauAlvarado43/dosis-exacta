@@ -9,9 +9,9 @@ class Remainder {
   int? id;
   late bool ingested;
   late DateTime date;
-  Drug? drug;
+  late Drug drug;
 
-  Remainder({ required this.ingested, required this.date });
+  Remainder({ required this.ingested, required this.date, required this.drug });
 
   Future save() async {
     Database db = await openDB();
@@ -20,87 +20,32 @@ class Remainder {
   }
 
   static Future<List<Remainder>?> getActive() async {
-
     Database db = await openDB();
-
-    List<Map> maps = await db.query(
-        tableName,
-        columns: ["id", "ingested", "date", "drug_id"],
-        where: "ingested = ?",
-        whereArgs: [0]
-    );
-
+    List<Map> maps = await db.rawQuery("SELECT remainder.id as remainder_id, ingested, date, drug_id, name, freq_type, freq, start_hour, days, duration, indications, drug.id as id FROM remainder INNER JOIN drug ON drug.id = remainder.drug_id WHERE ingested = 0");
+    maps.forEach((element) {print(element);});
     db.close();
-
-    List<Remainder> remainders = [];
-    for(int i = 0; i < maps.length; i++) {
-      Remainder remainder = await Remainder.fromMap(maps[i]);
-      remainders.add(remainder);
-    }
-
-    return remainders;
-
+    return maps.map((e) => Remainder.fromMap(e)).toList();
   }
 
   static Future<List<Remainder>?> getSamePeriodAndDrug(DateTime date, Drug drug) async {
-
-    print(date.toIso8601String());
-    print(drug.id);
-
     Database db = await openDB();
-
-    List<Map> maps = await db.query(
-        tableName,
-        columns: ["id", "ingested", "date", "drug_id"],
-        where: "date = ? AND drug_id = ?",
-        whereArgs: [date.toIso8601String(), drug.id]
-    );
-
+    List<Map> maps = await db.rawQuery("SELECT remainder.id as remainder_id, ingested, date, drug_id, name, freq_type, freq, start_hour, days, duration, indications, drug.id as id FROM remainder INNER JOIN drug ON drug.id = remainder.drug_id WHERE date = '" + date.toIso8601String() + "' AND drug_id = " + drug.id.toString());
     db.close();
-
-    List<Remainder> remainders = [];
-    for(int i = 0; i < maps.length; i++) {
-      Remainder remainder = await Remainder.fromMap(maps[i]);
-      remainders.add(remainder);
-    }
-
-    print(remainders);
-
-    return remainders;
-
+    return maps.map((e) => Remainder.fromMap(e)).toList();
   }
 
   static Future<List<Remainder>?> getAll() async {
-
     Database db = await openDB();
-    List<Map> maps = await db.query(tableName);
+    List<Map> maps = await db.rawQuery("SELECT remainder.id as remainder_id, ingested, date, drug_id, name, freq_type, freq, start_hour, days, duration, indications, drug.id as id FROM remainder INNER JOIN drug ON drug.id = remainder.drug_id");
     db.close();
-
-    List<Remainder> remainders = [];
-    for(int i = 0; i < maps.length; i++) {
-      Remainder remainder = await Remainder.fromMap(maps[i]);
-      remainders.add(remainder);
-    }
-
-    return remainders;
-
+    return maps.map((e) => Remainder.fromMap(e)).toList();
   }
 
   static Future<Remainder?> get(int id) async {
-
     Database db = await openDB();
-
-    List<Map> maps = await db.query(
-        "SELECT * FROM " + tableName,
-        columns: ["id", "ingested", "date", "drug_id"],
-        where: "id = ?",
-        whereArgs: [id]
-    );
-
+    List<Map> maps = await db.rawQuery("SELECT remainder.id as remainder_id, ingested, date, drug_id, name, freq_type, freq, start_hour, days, duration, indications, drug.id as id FROM remainder INNER JOIN drug ON drug.id = remainder.drug_id WHERE remainder.id = " + id.toString());
     db.close();
-
     return maps.map((map) => Remainder.fromMap(map)).toList().first;
-
   }
 
   Future delete() async {
@@ -122,17 +67,17 @@ class Remainder {
       "ingested": ingested ? 1 : 0,
       "date": date.toIso8601String(),
     };
-    if(drug != null) map["drug_id"] = drug?.id;
+    map["drug_id"] = drug.id;
     if(id != null) map["id"] = id;
     return map;
   }
 
-  static fromMap(Map<dynamic, dynamic> map) async {
-    Remainder remainder = Remainder(ingested: (map["ingested"] as int) == 1, date: DateTime.parse(map["date"]));
-    Drug? drug = await Drug.get(map["drug_id"]);
-    remainder.id = map["id"] as int;
-    if(drug != null) remainder.drug = drug;
-    return remainder;
+  Remainder.fromMap(Map<dynamic, dynamic> map) {
+    Drug tempDrug = Drug.fromMap(map);
+    ingested = (map["ingested"] as int) == 1;
+    date = DateTime.parse(map["date"]);
+    drug = tempDrug;
+    if(map["remainder_id"] != null) id = map["remainder_id"] as int;
   }
 
 }

@@ -137,6 +137,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
       }
     }else if(_selectedDuration == "Siempre"){
       sendDuration = DURATION.FOREVER;
+      sendDays = 1;
     }else{
       return;
     }
