@@ -45,8 +45,8 @@ class HttpHandler extends HttpHandlerCore {
 
     try{
       var response = await post(formatURL(url), body: jsonEncode(body), headers: {"Content-Type": "application/json"})
-          .timeout(const Duration(minutes: 2));
-      responseJson =  manageResponse(response);
+        .timeout(const Duration(minutes: 2));
+      responseJson = manageResponse(response);
     }
     on SocketException {
       return Result(data: null, status: StatusResponse.NETWORK_ERROR);

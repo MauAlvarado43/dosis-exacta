@@ -1,5 +1,4 @@
 
-import 'package:camera/camera.dart';
 import 'package:dosis_exacta/model/contact.dart';
 import 'package:dosis_exacta/model/remainder.dart';
 import 'package:dosis_exacta/utils/http_handler.dart';
@@ -10,17 +9,8 @@ import '../model/drug.dart';
 import '../model/user.dart';
 import '../utils/constants.dart';
 
+
 class RemainderVM {
-
-  Future<List<Drug>> uploadPhoto(XFile image) async {
-
-    var bytes = await image.readAsBytes();
-    var response = await HttpHandler().UPLOAD_FILE(API_URL + "/analyze_photo", bytes: bytes.buffer.asByteData());
-    print(response.data);
-
-    return [];
-
-  }
 
   Future<List<Remainder>?> getActiveRemainders() async {
     return await Remainder.getActive();

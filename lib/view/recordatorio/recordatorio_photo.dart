@@ -36,7 +36,7 @@ class StateRemainderPhoto extends State<RemainderPhoto> {
   Future<void> initializeCamera() async {
     final cameras = await availableCameras();
     final firstCamera = cameras.first;
-    controller = CameraController(firstCamera, ResolutionPreset.medium);
+    controller = CameraController(firstCamera, ResolutionPreset.ultraHigh);
     initializeControllerFuture = controller.initialize();
   }
 
@@ -109,6 +109,7 @@ class StateRemainderPhoto extends State<RemainderPhoto> {
                 ),
               ),
             );
+            Navigator.of(context).pop();
           } catch (e) {
             print(e);
           }

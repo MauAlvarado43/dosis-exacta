@@ -1,8 +1,88 @@
 import 'package:dosis_exacta/model/drug.dart';
 import 'package:dosis_exacta/utils/constants.dart';
 import 'package:dosis_exacta/viewmodel/remainder_vm.dart';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:camera/camera.dart';
+import 'package:dosis_exacta/utils/http_handler.dart';
 
 class DrugVM {
+
+  Future<bool> createDrugs(List<Drug> drugs) async {
+
+    try {
+
+      for(int i = 0; i < drugs.length; i++) {
+        drugs[i].save();
+        await RemainderVM.makeNextRemainder(drugs[i], cancel: true);
+      }
+
+      return true;
+
+    }catch(e){
+      return false;
+    }
+
+  }
+
+  Future<List<Drug>> uploadPhoto(XFile image) async {
+
+    Uint8List bytes = await image.readAsBytes();
+    String base64String = base64Encode(bytes);
+    var response = await HttpHandler().POST(API_URL + "/analyze_photo", {
+      "image": base64String
+    });
+
+    if(response.data != null) {
+
+      List<Drug> drugs = List<Drug>.from(response.data["medicines"].map((medicine) {
+
+        var type = null;
+        var duration = null;
+        var days = 0;
+
+        if (medicine["frequency_hour"]["unit"] == "hora" ||
+            medicine["frequency_hour"]["unit"] == "horas" ||
+            medicine["frequency_hour"]["unit"] == "hour" ||
+            medicine["frequency_hour"]["unit"] == "hours") {
+          type = FREQ_TYPE.HOUR;
+        }
+        else {
+          type = FREQ_TYPE.DAILY;
+        }
+
+        if (medicine["duration_days"]["unit"] == "dias" ||
+            medicine["duration_days"]["unit"] == "days" ||
+            medicine["duration_days"]["unit"] == "días") {
+          duration = DURATION.DAILY;
+          days = medicine["duration_days"]["value"];
+        }
+        else {
+          duration = DURATION.FOREVER;
+        }
+
+        Drug drug = Drug(
+            name: medicine["medicine"],
+            freq_type: type,
+            freq: medicine["frequency_hour"]["value"],
+            start_hour: 8,
+            duration: duration
+        );
+
+        drug.indications = medicine["indications"];
+        drug.days = days;
+
+        return drug;
+
+      }));
+
+      return drugs;
+
+    }
+
+    return [];
+
+  }
 
   Future<List<Drug>?> getDrugs() async {
     return await Drug.getAll();
@@ -16,7 +96,7 @@ class DrugVM {
 
     try {
       await drug.save();
-
+      await RemainderVM.makeNextRemainder(drug, cancel: true);
       return true;
     }catch(e){
       return false;
