@@ -52,8 +52,9 @@ class Drug {
   Future delete() async {
     Database db = await openDB();
     if(id == null) throw Exception("Drug id is null");
-    Remainder.deleteByDrugId(id!);
+    print(id);
     await db.delete(tableName, where: "id = ?", whereArgs: [id]);
+    await Remainder.deleteByDrugId(id!);
     db.close();
   }
 

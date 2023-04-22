@@ -137,7 +137,6 @@ class Remainder {
 
   static Future deleteByDrugId(int drug_id) async {
     Database db = await openDB();
-    if(drug_id == null) throw Exception("Remainder id is null");
     await db.delete(tableName, where: "drug_id = ?", whereArgs: [drug_id]);
     db.close();
   }
