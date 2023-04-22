@@ -13,7 +13,7 @@ class DrugVM {
     try {
 
       for(int i = 0; i < drugs.length; i++) {
-        drugs[i].save();
+        await drugs[i].save();
         await RemainderVM.makeNextRemainder(drugs[i], cancel: true);
       }
 

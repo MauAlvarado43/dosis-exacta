@@ -23,7 +23,7 @@ class RemainderVM {
   }
 
   static cancelPreviousRemainders(Drug drug) async {
-    List<Remainder>? remainders = await Remainder.getActive();
+    List<Remainder>? remainders = await Remainder.getActiveByDrugID(drug);
     if(remainders != null) {
       for (int i = 0; i < remainders.length; i++) {
         remainders[i].ingested = true;
