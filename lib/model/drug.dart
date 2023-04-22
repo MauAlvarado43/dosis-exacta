@@ -1,4 +1,5 @@
 import 'package:dosis_exacta/model/database.dart';
+import 'package:dosis_exacta/model/remainder.dart';
 import 'package:dosis_exacta/utils/constants.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -51,6 +52,7 @@ class Drug {
   Future delete() async {
     Database db = await openDB();
     if(id == null) throw Exception("Drug id is null");
+    Remainder.deleteByDrugId(id!);
     await db.delete(tableName, where: "id = ?", whereArgs: [id]);
     db.close();
   }

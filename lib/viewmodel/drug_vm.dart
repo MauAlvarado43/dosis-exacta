@@ -131,7 +131,10 @@ class DrugVM {
   Future<bool> deleteDrug(Drug drug) async {
 
     try {
+
+
       await drug.delete();
+
       return true;
     }catch(e){
       return false;
