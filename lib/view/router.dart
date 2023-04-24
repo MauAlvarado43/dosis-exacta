@@ -19,5 +19,5 @@ var ROUTER = {
   "/recordatorio/form": (context) => const RecordatorioForm(), // Detalles Medicina
   "/recordatorio/photo": (context) => const RemainderPhoto(), // Tomar Foto
   "/recordatorio/list": (context) => const RemainderList(), // Recordatorios Modificar
-  "/recordatorio/home": (context) => const RemainderHome() // Recordatorios
+  "/recordatorio/home": (context) => const RemainderHome(), // Recordatorios
 };

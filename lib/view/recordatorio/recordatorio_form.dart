@@ -97,11 +97,23 @@ class _RecordatorioForm extends State<RecordatorioForm> {
   ];
   final List<String> _intervals = [
     '4 horas',
+    '6 horas',
     '8 horas',
     '12 horas',
     '24 horas'
   ];
   final List<String> _durations = ['Días', 'Siempre'];
+
+
+  final snackBar = SnackBar(
+    content: const Text('Por favor, llene todos sus datos'),
+    action: SnackBarAction(
+      label: 'Undo',
+      onPressed: () {
+        // Some code to undo the change.
+      },
+    ),
+  );
 
   onClickSave() async {
     bool result = false;
@@ -113,42 +125,93 @@ class _RecordatorioForm extends State<RecordatorioForm> {
     int? sendDays;
     DURATION sendDuration;
     //freq_type
+    // if(_selectedOption == "Dosis Diaria"){
+    //   sendFreq_type = FREQ_TYPE.DAILY;
+    // }else{
+    //   sendFreq_type = FREQ_TYPE.HOUR;
+    // }
+    // //freq
+    // if(sendFreq_type == FREQ_TYPE.DAILY) {
+    //   if(_selectedTimes != null){
+    //     sendTemp = int.parse(_selectedTimes.toString()[0]);
+    //   } else{
+    //     sendTemp = 1;
+    //   }
+    // }
+    // else {
+    //   if (_selectedInterval != null) {
+    //     sendTemp = int.parse(_selectedInterval.toString().split(" ")[0]);
+    //   } else {
+    //     sendTemp = 1;
+    //   }
+    // }
+    // //start_hour
+    // if(_selectedHour!=null){
+    //   sendStart_hour = _hours.indexOf(_selectedHour!);
+    // }else{
+    //   sendStart_hour = 1;
+    // }
+    // //days
+    // if(_selectedDays!=null){
+    //   sendDays = int.parse(_selectedDays.toString().replaceAll(RegExp('[A-Za-zí]'), ''));
+    // }
+    // //duration
+    // if(_selectedDuration == "Días"){
+    //   sendDuration = DURATION.DAILY;
+    // }else{
+    //   sendDuration = DURATION.FOREVER;
+    // }
+    //
+    if(_nameController.text == ""){
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+
+    if(_selectedDuration == "Días"){
+      sendDuration = DURATION.DAILY;
+      if(_selectedDays!=null){
+        sendDays = int.parse(_selectedDays.toString().replaceAll(RegExp('[A-Za-zí]'), ''));
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        return;
+      }
+    }else if(_selectedDuration == "Siempre"){
+      sendDuration = DURATION.FOREVER;
+      sendDays = 1;
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+    //final validation
     if(_selectedOption == "Dosis Diaria"){
       sendFreq_type = FREQ_TYPE.DAILY;
-    }else{
-      sendFreq_type = FREQ_TYPE.HOUR;
-    }
-    //freq
-    if(sendFreq_type == FREQ_TYPE.DAILY) {
+      sendStart_hour = 1;
       if(_selectedTimes != null){
         sendTemp = int.parse(_selectedTimes.toString()[0]);
       } else{
-        sendTemp = 1;
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        return;
       }
-    }
-    else {
+    }else if(_selectedOption == "Horas"){
+      sendFreq_type = FREQ_TYPE.HOUR;
+      if(_selectedHour!=null){
+        sendStart_hour = _hours.indexOf(_selectedHour!);
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        return;
+      }
       if (_selectedInterval != null) {
         sendTemp = int.parse(_selectedInterval.toString().split(" ")[0]);
       } else {
-        sendTemp = 1;
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        return;
       }
-    }
-    //start_hour
-    if(_selectedHour!=null){
-      sendStart_hour = _hours.indexOf(_selectedHour!);
     }else{
-      sendStart_hour = 1;
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
     }
-    //days
-    if(_selectedDays!=null){
-      sendDays = int.parse(_selectedDays.toString().replaceAll(RegExp('[A-Za-zí]'), ''));
-    }
-    //duration
-    if(_selectedDuration == "Días"){
-      sendDuration = DURATION.DAILY;
-    }else{
-      sendDuration = DURATION.FOREVER;
-    }
+    //
 
     if(drug == null){
       result = await viewModel.createDrug(
@@ -175,6 +238,9 @@ class _RecordatorioForm extends State<RecordatorioForm> {
     }
 
   }
+
+
+
 
   onClickAddHand() {
     Navigator.of(context).pushNamed("/recordatorio/form");
