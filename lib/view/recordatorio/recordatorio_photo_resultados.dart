@@ -105,7 +105,21 @@ class StateRemainderPhotoResults extends State<RemainderPhotoResults> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading ? const Scaffold() : Scaffold(
+    return isLoading ? Scaffold(
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircularProgressIndicator()
+            ],
+          )
+        ],
+      )
+    ) : Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: AppColors.primary(),
@@ -388,44 +402,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
     int sendStart_hour;
     int? sendDays;
     DURATION sendDuration;
-    //
-    // if(_selectedOption == "Dosis Diaria"){
-    //   sendFreq_type = FREQ_TYPE.DAILY;
-    // }else{
-    //   sendFreq_type = FREQ_TYPE.HOUR;
-    // }
-    //
-    // if(sendFreq_type == FREQ_TYPE.DAILY) {
-    //   if(_selectedTimes != null){
-    //     sendTemp = int.parse(_selectedTimes.toString()[0]);
-    //   } else{
-    //     sendTemp = 1;
-    //   }
-    // }
-    // else {
-    //   if (_selectedInterval != null) {
-    //     sendTemp = int.parse(_selectedInterval.toString().split(" ")[0]);
-    //   } else {
-    //     sendTemp = 1;
-    //   }
-    // }
-    //
-    // if(_selectedHour!=null){
-    //   sendStart_hour = _hours.indexOf(_selectedHour!);
-    // }else{
-    //   sendStart_hour = 1;
-    // }
-    //
-    // if(_selectedDays!=null){
-    //   sendDays = int.parse(_selectedDays.toString().replaceAll(RegExp('[A-Za-zí]'), ''));
-    // }
-    //
-    // if(_selectedDuration == "Días"){
-    //   sendDuration = DURATION.DAILY;
-    // }else{
-    //   sendDuration = DURATION.FOREVER;
-    // }
-    //
+
     if(_nameController.text == ""){
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;

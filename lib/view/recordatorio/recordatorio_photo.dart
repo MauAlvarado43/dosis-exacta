@@ -44,20 +44,20 @@ class StateRemainderPhoto extends State<RemainderPhoto> {
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback(
-            (_) async {
-          user = await viewModel.checkExistingUser();
-          if(user == null) {
-            Navigator.of(context).pushReplacementNamed("/");
-          }
-          else {
-            setState(
-                    () {
-                  isLoading = false;
-                }
-            );
-            initializeCamera();
-          }
+      (_) async {
+        user = await viewModel.checkExistingUser();
+        if(user == null) {
+          Navigator.of(context).pushReplacementNamed("/");
         }
+        else {
+          setState(
+                  () {
+                isLoading = false;
+              }
+          );
+          initializeCamera();
+        }
+      }
     );
   }
 
@@ -69,7 +69,7 @@ class StateRemainderPhoto extends State<RemainderPhoto> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading ? const Scaffold() : Scaffold(
+    return isLoading ? Scaffold() : Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: AppColors.primary(),

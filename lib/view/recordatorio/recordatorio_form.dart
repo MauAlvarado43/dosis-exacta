@@ -14,10 +14,13 @@ class RecordatorioForm extends StatefulWidget {
 }
 
 class _RecordatorioForm extends State<RecordatorioForm> {
+
   bool isLoading = true;
   DrugVM viewModel = DrugVM();
+
   var user;
   var drug;
+
   String? _selectedOption;
   String? _selectedHour;
   String? _selectedInterval;
@@ -104,7 +107,6 @@ class _RecordatorioForm extends State<RecordatorioForm> {
   ];
   final List<String> _durations = ['Días', 'Siempre'];
 
-
   final snackBar = SnackBar(
     content: const Text('Por favor, llene todos sus datos'),
     action: SnackBarAction(
@@ -115,105 +117,161 @@ class _RecordatorioForm extends State<RecordatorioForm> {
     ),
   );
 
+  bool showDrugMessage = false;
+  bool showFreqMessage = false;
+  bool showFreqDaysMessage = false;
+  bool showFreqHourMessage = false;
+  bool showFreqPeriodMessage = false;
+  bool showDurationMessage = false;
+  bool showDurationDaysMessage = false;
+
   onClickSave() async {
+
     bool result = false;
 
-    //var
     FREQ_TYPE sendFreq_type;
     int sendTemp;
     int sendStart_hour;
     int? sendDays;
     DURATION sendDuration;
-    //freq_type
-    // if(_selectedOption == "Dosis Diaria"){
-    //   sendFreq_type = FREQ_TYPE.DAILY;
-    // }else{
-    //   sendFreq_type = FREQ_TYPE.HOUR;
-    // }
-    // //freq
-    // if(sendFreq_type == FREQ_TYPE.DAILY) {
-    //   if(_selectedTimes != null){
-    //     sendTemp = int.parse(_selectedTimes.toString()[0]);
-    //   } else{
-    //     sendTemp = 1;
-    //   }
-    // }
-    // else {
-    //   if (_selectedInterval != null) {
-    //     sendTemp = int.parse(_selectedInterval.toString().split(" ")[0]);
-    //   } else {
-    //     sendTemp = 1;
-    //   }
-    // }
-    // //start_hour
-    // if(_selectedHour!=null){
-    //   sendStart_hour = _hours.indexOf(_selectedHour!);
-    // }else{
-    //   sendStart_hour = 1;
-    // }
-    // //days
-    // if(_selectedDays!=null){
-    //   sendDays = int.parse(_selectedDays.toString().replaceAll(RegExp('[A-Za-zí]'), ''));
-    // }
-    // //duration
-    // if(_selectedDuration == "Días"){
-    //   sendDuration = DURATION.DAILY;
-    // }else{
-    //   sendDuration = DURATION.FOREVER;
-    // }
-    //
-    if(_nameController.text == ""){
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return;
+
+    int errors = 0;
+
+    if(_nameController.text == "") {
+      errors += 1;
+      setState(() {
+        showDrugMessage = true;
+      });
+    }
+    else {
+      setState(() {
+        showDrugMessage = false;
+      });
     }
 
+    if(_selectedDuration == "Días") {
 
-    if(_selectedDuration == "Días"){
       sendDuration = DURATION.DAILY;
+      setState(() {
+        showDurationMessage = false;
+      });
+
       if(_selectedDays!=null){
         sendDays = int.parse(_selectedDays.toString().replaceAll(RegExp('[A-Za-zí]'), ''));
-      }else{
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        return;
+        setState(() {
+          showDurationDaysMessage = false;
+        });
       }
-    }else if(_selectedDuration == "Siempre"){
+      else{
+        errors += 1;
+        setState(() {
+          showDurationDaysMessage = true;
+        });
+      }
+
+    }
+    else if(_selectedDuration == "Siempre"){
       sendDuration = DURATION.FOREVER;
       sendDays = 1;
-    }else{
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return;
+      setState(() {
+        showDurationMessage = false;
+      });
     }
-    //final validation
-    if(_selectedOption == "Dosis Diaria"){
+    else{
+      sendDuration = DURATION.FOREVER;
+      errors += 1;
+      setState(() {
+        showDurationMessage = true;
+      });
+    }
+
+    if(_selectedOption == "Dosis Diaria") {
+
       sendFreq_type = FREQ_TYPE.DAILY;
+      sendTemp = 1;
       sendStart_hour = 1;
+
+      setState(() {
+        showFreqMessage = false;
+      });
+      setState(() {
+        showFreqHourMessage = false;
+      });
+      setState(() {
+        showFreqPeriodMessage = false;
+      });
+
       if(_selectedTimes != null){
         sendTemp = int.parse(_selectedTimes.toString()[0]);
-      } else{
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        return;
+        setState(() {
+          showFreqDaysMessage = false;
+        });
       }
-    }else if(_selectedOption == "Horas"){
+      else{
+        errors += 1;
+        setState(() {
+          showFreqDaysMessage = true;
+        });
+      }
+
+    }
+    else if(_selectedOption == "Horas"){
+
       sendFreq_type = FREQ_TYPE.HOUR;
-      if(_selectedHour!=null){
+      sendTemp = 1;
+      sendStart_hour = 1;
+
+      setState(() {
+        showFreqMessage = false;
+      });
+
+      setState(() {
+        showFreqDaysMessage = false;
+      });
+
+      if(_selectedHour!=null) {
         sendStart_hour = _hours.indexOf(_selectedHour!);
-      }else{
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        return;
+        setState(() {
+          showFreqHourMessage = false;
+        });
       }
+      else {
+        errors += 1;
+        setState(() {
+          showFreqHourMessage = true;
+        });
+      }
+
       if (_selectedInterval != null) {
         sendTemp = int.parse(_selectedInterval.toString().split(" ")[0]);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        return;
+        setState(() {
+          showFreqPeriodMessage = false;
+        });
       }
-    }else{
+      else {
+        errors += 1;
+        setState(() {
+          showFreqPeriodMessage = true;
+        });
+      }
+
+    }
+    else{
+      sendFreq_type = FREQ_TYPE.HOUR;
+      sendTemp = 1;
+      sendStart_hour = 1;
+      errors += 1;
+      setState(() {
+        showFreqMessage = true;
+      });
+    }
+
+    if(errors > 0) {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
     }
-    //
 
-    if(drug == null){
+    if(drug == null) {
       result = await viewModel.createDrug(
           name: _nameController.text,
           freq_type: sendFreq_type,
@@ -222,7 +280,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
           days: sendDays,
           duration: sendDuration,
           indications: _indicationsController.text);
-    }else{
+    } else{
       result = await viewModel.updateDrug(drug,
           name: _nameController.text,
           freq_type: sendFreq_type,
@@ -238,9 +296,6 @@ class _RecordatorioForm extends State<RecordatorioForm> {
     }
 
   }
-
-
-
 
   onClickAddHand() {
     Navigator.of(context).pushNamed("/recordatorio/form");
@@ -266,8 +321,8 @@ class _RecordatorioForm extends State<RecordatorioForm> {
 
   @override
   Widget build(BuildContext context) {
-    Map<dynamic, dynamic>? args =
-      ModalRoute.of(context)!.settings.arguments as Map<dynamic, dynamic>?; //the error is here
+
+    Map<dynamic, dynamic>? args = ModalRoute.of(context)!.settings.arguments as Map<dynamic, dynamic>?; //the error is here
 
     if(args != null && args["drug"] != null){
       setState(() {
@@ -345,6 +400,8 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                 ),
                 elevation: 5,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
                       height: 0.02.sh,
@@ -354,7 +411,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                       children: [
                         Padding(
                           padding: EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
-                          child: Text("Nombre del medicamento",
+                          child: Text("Nombre del medicamento *",
                               style: AppTextTheme.medium()),
                         )
                       ],
@@ -364,11 +421,33 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                       padding: EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
                       child: TextField(
                         controller: _nameController,
+                        onChanged: (e) {
+                          if(_nameController.text == "") {
+                            setState(() {
+                              showDrugMessage = true;
+                            });
+                          }
+                          else {
+                            setState(() {
+                              showDrugMessage = false;
+                            });
+                          }
+                        },
                         decoration:
                             Styles.input(context, controller: _nameController),
                       ),
                     ),
-                    //SELECT FREQUENCY
+                    Visibility(
+                      visible: showDrugMessage,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(0.05.sw, 0.01.sh, 0.05.sw, 0),
+                        child: Text(
+                            "Ingrese un nombre de medicamento",
+                            textAlign: TextAlign.start,
+                            style: AppTextTheme.medium(color: Colors.redAccent)
+                        ),
+                      )
+                    ),
                     SizedBox(height: 0.02.sh),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -376,7 +455,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                         Padding(
                           padding: EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
                           child:
-                              Text("Frecuencia", style: AppTextTheme.medium()),
+                              Text("Frecuencia *", style: AppTextTheme.medium()),
                         )
                       ],
                     ),
@@ -405,6 +484,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                             onChanged: (String? newValue) {
                               setState(() {
                                 _selectedOption = newValue!;
+                                showFreqMessage = false;
                               });
                             },
                             items: _options
@@ -421,6 +501,17 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                           ),
                         ),
                       ],
+                    ),
+                    Visibility(
+                        visible: showFreqMessage,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, _selectedOption == 'Dosis Diaria' ? 0.015.sh : 0),
+                          child: Text(
+                              "Ingrese una frecuencia",
+                              textAlign: TextAlign.start,
+                              style: AppTextTheme.medium(color: Colors.redAccent)
+                          ),
+                        )
                     ),
                     _selectedOption == 'Dosis Diaria'
                         ? Row(
@@ -448,6 +539,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                                   onChanged: (String? newValue) {
                                     setState(() {
                                       _selectedTimes = newValue!;
+                                      showFreqDaysMessage = false;
                                     });
                                   },
                                   items: _timesForDay
@@ -467,6 +559,17 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                             ],
                           )
                         : Container(),
+                    Visibility(
+                        visible: showFreqDaysMessage,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(0.05.sw, _selectedOption == "Horas" ? 0.sh : 0.015.sh, 0.05.sw, _selectedOption == "Horas" ? 0.02.sh : 0),
+                          child: Text(
+                              "Ingrese la cantidad de veces al día",
+                              textAlign: TextAlign.start,
+                              style: AppTextTheme.medium(color: Colors.redAccent)
+                          ),
+                        )
+                    ),
                     _selectedOption == "Horas"
                         ? Row(
                             children: [
@@ -492,6 +595,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                                   onChanged: (String? newValue) {
                                     setState(() {
                                       _selectedHour = newValue!;
+                                      showFreqHourMessage = false;
                                     });
                                   },
                                   items: _hours.map<DropdownMenuItem<String>>(
@@ -529,6 +633,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                                   onChanged: (String? newValue) {
                                     setState(() {
                                       _selectedInterval = newValue!;
+                                      showFreqPeriodMessage = false;
                                     });
                                   },
                                   items: _intervals
@@ -548,8 +653,28 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                             ],
                           )
                         : Container(),
-
-                    //SELECT FOR DURATION
+                    Visibility(
+                        visible: showFreqHourMessage,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(0.05.sw, 0.02.sh, 0.05.sw, 0),
+                          child: Text(
+                              "Ingrese la hora inicial",
+                              textAlign: TextAlign.start,
+                              style: AppTextTheme.medium(color: Colors.redAccent)
+                          ),
+                        )
+                    ),
+                    Visibility(
+                        visible: showFreqPeriodMessage,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(0.05.sw, 0.02.sh, 0.05.sw, 0),
+                          child: Text(
+                              "Ingrese el periodo de cada dosis",
+                              textAlign: TextAlign.start,
+                              style: AppTextTheme.medium(color: Colors.redAccent)
+                          ),
+                        )
+                    ),
                     SizedBox(
                       height: 0.025.sh,
                     ),
@@ -558,7 +683,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                       children: [
                         Padding(
                           padding: EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
-                          child: Text("Duración", style: AppTextTheme.medium()),
+                          child: Text("Duración *", style: AppTextTheme.medium()),
                         )
                       ],
                     ),
@@ -587,6 +712,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                             onChanged: (String? newValue) {
                               setState(() {
                                 _selectedDuration = newValue!;
+                                showDurationMessage = false;
                               });
                             },
                             items: _durations
@@ -603,6 +729,17 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                           ),
                         ),
                       ],
+                    ),
+                    Visibility(
+                        visible: showDurationMessage,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(0.05.sw, 0.sh, 0.05.sw, 0),
+                          child: Text(
+                              "Ingrese una duración",
+                              textAlign: TextAlign.start,
+                              style: AppTextTheme.medium(color: Colors.redAccent)
+                          ),
+                        )
                     ),
                     _selectedDuration == 'Días'
                         ? Row(
@@ -630,6 +767,7 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                                   onChanged: (String? newValue) {
                                     setState(() {
                                       _selectedDays = newValue!;
+                                      showDurationDaysMessage = false;
                                     });
                                   },
                                   items: _days.map<DropdownMenuItem<String>>(
@@ -648,8 +786,17 @@ class _RecordatorioForm extends State<RecordatorioForm> {
                             ],
                           )
                         : Container(),
-
-                    //INPUT FOR INDICATIONS
+                    Visibility(
+                        visible: showDurationDaysMessage,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(0.05.sw, 0.sh, 0.05.sw, 0),
+                          child: Text(
+                              "Ingrese los días de duración",
+                              textAlign: TextAlign.start,
+                              style: AppTextTheme.medium(color: Colors.redAccent)
+                          ),
+                        )
+                    ),
                     SizedBox(
                       height: 0.025.sh,
                     ),

@@ -19,24 +19,61 @@ class _ContactFormState extends State<ContactForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
-  onClickSave() async {
-    bool result = false;
+  bool showNameMessage = false;
+  bool showEmailMessage = false;
+  bool showPhoneMessage = false;
 
-    if (contact == null) {
+  final snackBar = SnackBar(
+    content: const Text('Por favor, llene todos sus datos'),
+    action: SnackBarAction(
+      label: 'Undo',
+      onPressed: () {
+        // Some code to undo the change.
+      },
+    ),
+  );
+
+  onClickSave() async {
+
+    bool result = false;
+    int errors = 0;
+
+    if(_nameController.text == "") {
+      errors += 1;
+      setState(() {
+        showNameMessage = true;
+      });
+    }
+
+    if(_emailController.text == "") {
+      errors += 1;
+      setState(() {
+        showEmailMessage = true;
+      });
+    }
+
+    if(errors > 0) {
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    if(contact == null) {
       result = await viewModel.createContact(
-          name: _nameController.text,
-          email: _emailController.text,
-          phone: _phoneController.text);
-    } else {
+        name: _nameController.text,
+        email: _emailController.text,
+        phone: _phoneController.text);
+    }
+    else {
       result = await viewModel.updateContact(contact,
-          name: _nameController.text,
-          email: _emailController.text,
-          phone: _phoneController.text);
+        name: _nameController.text,
+        email: _emailController.text,
+        phone: _phoneController.text);
     }
 
     if (result) {
       Navigator.of(context).pop(true);
     }
+
   }
 
   onClickReturn() {
@@ -50,8 +87,9 @@ class _ContactFormState extends State<ContactForm> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic>? args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+    Map<String, dynamic>? args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
     if (args != null && args["contact"] != null) {
       setState(() {
         contact = args["contact"];
@@ -86,15 +124,16 @@ class _ContactFormState extends State<ContactForm> {
                   ),
                   elevation: 5,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: 0.04.sh),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Padding(
-                            padding:
-                                EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
-                            child: Text("Nombre", style: AppTextTheme.medium()),
+                            padding: EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
+                            child: Text("Nombre *", style: AppTextTheme.medium()),
                           )
                         ],
                       ),
@@ -102,19 +141,42 @@ class _ContactFormState extends State<ContactForm> {
                       Padding(
                         padding: EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
                         child: TextField(
+                          onChanged: (e) {
+                            if(_nameController.text != "") {
+                              setState(() {
+                                showNameMessage = false;
+                              });
+                            }
+                            else {
+                              setState(() {
+                                showNameMessage = true;
+                              });
+                            }
+                          },
                           controller: _nameController,
                           decoration: Styles.input(context,
                               controller: _nameController),
                         ),
                       ),
-                      SizedBox(height: 0.05.sh),
+                      Visibility(
+                          visible: showNameMessage,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(0.05.sw, 0.015.sh, 0.05.sw, 0),
+                            child: Text(
+                                "Ingrese un nombre",
+                                textAlign: TextAlign.start,
+                                style: AppTextTheme.medium(color: Colors.redAccent)
+                            ),
+                          )
+                      ),
+                      SizedBox(height: 0.02.sh),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Padding(
                             padding:
                                 EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
-                            child: Text("Correo", style: AppTextTheme.medium()),
+                            child: Text("Correo *", style: AppTextTheme.medium()),
                           )
                         ],
                       ),
@@ -122,12 +184,35 @@ class _ContactFormState extends State<ContactForm> {
                       Padding(
                         padding: EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
                         child: TextField(
+                          onChanged: (e) {
+                            if(_emailController.text != "") {
+                              setState(() {
+                                showEmailMessage = false;
+                              });
+                            }
+                            else {
+                              setState(() {
+                                showEmailMessage = true;
+                              });
+                            }
+                          },
                           controller: _emailController,
                           decoration: Styles.input(context,
-                              controller: _nameController),
+                              controller: _emailController),
                         ),
                       ),
-                      SizedBox(height: 0.05.sh),
+                      Visibility(
+                          visible: showEmailMessage,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(0.05.sw, 0.015.sh, 0.05.sw, 0),
+                            child: Text(
+                                "Ingrese un correo",
+                                textAlign: TextAlign.start,
+                                style: AppTextTheme.medium(color: Colors.redAccent)
+                            ),
+                          )
+                      ),
+                      SizedBox(height: 0.02.sh),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -148,7 +233,7 @@ class _ContactFormState extends State<ContactForm> {
                               controller: _nameController),
                         ),
                       ),
-                      SizedBox(height: 0.05.sh),
+                      SizedBox(height: 0.04.sh),
                       Padding(
                         padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
                         child: ElevatedButton(
