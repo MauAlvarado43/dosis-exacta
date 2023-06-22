@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:dosis_exacta/utils/constants.dart';
 import 'package:dosis_exacta/viewmodel/drug_vm.dart';
 import 'package:flutter/material.dart';
@@ -110,13 +111,14 @@ class _RemainderList extends State<RemainderList> {
             ],
           ),
         ),
-        body: SingleChildScrollView(
+        body: FadeIn(child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: 0.01.sh),
-              SizedBox(
+              drugs.length > 0
+                ? SizedBox(
                 height: 0.70.sh,
                 child: ListView.builder(
                   itemCount: drugs.length,
@@ -174,17 +176,30 @@ class _RemainderList extends State<RemainderList> {
                                     SizedBox(
                                       width: 0.3.sw,
                                       child: ElevatedButton(
-                                          onPressed: (){onClickAddHand(index);},
+                                          onPressed: (){ onClickAddHand(index); },
                                           style: Styles.button(context, color: Color(0xFF7977AA)),
-                                          child: Text("Editar",style:AppTextTheme.medium(color: Colors.white))
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              const Icon(Icons.edit, color: Colors.white,),
+                                              const SizedBox(width: 5),
+                                              Text("Editar",style:AppTextTheme.medium(color: Colors.white))
+                                            ],
+                                          )
                                       ),
                                     ),
                                     SizedBox(
                                       width: 0.3.sw,
                                       child: ElevatedButton(
-                                          onPressed: (){onClickDelete(index);},
+                                          onPressed: (){ onClickDelete(index); },
                                           style: Styles.button(context, color: Color(0xFFF44336)),
-                                          child: Text("Eliminar",style:AppTextTheme.medium(color: Colors.white))
+                                          child: Row(
+                                            children: [
+                                              const Icon(Icons.delete, color: Colors.white,),
+                                              const SizedBox(width: 5),
+                                              Text("Eliminar",style:AppTextTheme.medium(color: Colors.white))
+                                            ],
+                                          )
                                       ),
                                     ),
                                   ],
@@ -197,6 +212,25 @@ class _RemainderList extends State<RemainderList> {
                     );
                   },
                 ),
+              )
+                : SizedBox(
+                  height: 0.7.sh,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(height: 0.03.sh),
+                      Image.asset("assets/images/no_drugs.png"),
+                      SizedBox(height: 0.03.sh),
+                      Text(
+                        "Aún no tienes medicamentos registrados",
+                        style: AppTextTheme.medium(color: Colors.black),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 0.03.sh),
+                      SizedBox(height: 0.03.sh),
+                    ],
+                  )
               ),
               Padding(
                 padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
@@ -219,7 +253,7 @@ class _RemainderList extends State<RemainderList> {
               ),
             ],
           ),
-        )
+        ))
     );
   }
 

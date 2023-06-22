@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:animate_do/animate_do.dart';
 import 'package:camera/camera.dart';
 import 'package:dosis_exacta/model/drug.dart';
 import 'package:dosis_exacta/viewmodel/drug_vm.dart';
@@ -21,6 +22,7 @@ class RemainderPhotoResults extends StatefulWidget {
 class StateRemainderPhotoResults extends State<RemainderPhotoResults> {
 
   bool isLoading = true;
+  bool isNull = false;
   DrugVM viewModel = DrugVM();
   var drugs = null;
 
@@ -80,20 +82,33 @@ class StateRemainderPhotoResults extends State<RemainderPhotoResults> {
 
           drugs = await viewModel.uploadPhoto(widget.image);
 
-          for(int i = 0; i < drugs.length ; i++) {
-            if (drugs[i].freq_type == FREQ_TYPE.DAILY) {
-              timeOrPill.add(drugs[i].freq.toString() + " por día");
-            }
-            else {
-              timeOrPill.add("Cada " + drugs[i].freq.toString() + " horas"); //cambiar a interval
-            }
+          if(drugs != null) {
+            if(drugs.length > 0) {
+              for(int i = 0; i < drugs.length ; i++) {
+                if (drugs[i].freq_type == FREQ_TYPE.DAILY) {
+                  timeOrPill.add(drugs[i].freq.toString() + " por día");
+                }
+                else {
+                  timeOrPill.add("Cada " + drugs[i].freq.toString() + " horas"); //cambiar a interval
+                }
 
-            if(drugs[i].duration == DURATION.DAILY) {
-              timeLeft.add("Por " + drugs[i].days.toString() + " días");
+                if(drugs[i].duration == DURATION.DAILY) {
+                  timeLeft.add("Por " + drugs[i].days.toString() + " días");
+                }
+                else {
+                  timeLeft.add("Sin tiempo límite");
+                }
+              }
             }
             else {
-              timeLeft.add("Sin tiempo límite");
+              drugs = [];
+              print("DRUGS EMPTY");
             }
+          }
+          else {
+            drugs = [];
+            isNull = true;
+            print("IS NULL");
           }
 
           setState(() { isLoading = false; });
@@ -133,7 +148,7 @@ class StateRemainderPhotoResults extends State<RemainderPhotoResults> {
             ],
           ),
         ),
-        body: SingleChildScrollView(
+        body: FadeIn(child: SingleChildScrollView(
           physics: const ScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -145,126 +160,158 @@ class StateRemainderPhotoResults extends State<RemainderPhotoResults> {
                 child: Image.file(File(widget.image.path)),
               ),
               SizedBox(height: 0.05.sh),
-              SizedBox(
+              isNull ? Column(
+                children: [
+                  Text("Ha ocurrido un error, inténtelo más tarde", style: AppTextTheme.medium(color: Colors.black), textAlign: TextAlign.center,)
+                ],
+              ) : SizedBox(),
+              drugs != null && drugs.length > 0 ? SizedBox(
                 height: (drugs.length * 200.0),
                 child: ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: drugs.length,
                   itemBuilder: (context,index){
-                    return Padding(
-                      padding: EdgeInsets.fromLTRB(0.03.sw, 0, 0.03.sw, 0),
-                      child: Card(
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(0.1.sw, 0.02.sh, 0.1.sw, 0.0.sh),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(drugs[index].name,style:AppTextTheme.large(),maxLines: 3,
-                                      overflow: TextOverflow.clip,
-                                    ),
-                                  ),
-                                  Text(timeLeft[index],style:AppTextTheme.small())
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(0.1.sw, 0.005.sh, 0.1.sw, 0.0.sh),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    child: Text(timeOrPill[index],style:AppTextTheme.small(),maxLines: 3),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(0.1.sw, 0.005.sh, 0.1.sw, 0.0.sh),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(drugs[index].indications,style:AppTextTheme.small(),maxLines: 3,overflow: TextOverflow.clip,),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(0.1.sw, 0.005.sh, 0.1.sw, 0.02.sh),
-                              child: Padding(
-                                padding:EdgeInsets.fromLTRB(0.003.sw, 0.005.sh, 0.0.sw, 0.0.sh),
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 20.0),
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(0.03.sw, 0, 0.03.sw, 0),
+                        child: Card(
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(0.1.sw, 0.02.sh, 0.1.sw, 0.0.sh),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    SizedBox(
-                                      width: 0.3.sw,
-                                      child: ElevatedButton(
-                                          onPressed: (){onEdit(index);},
-                                          style: Styles.button(context, color: Color(0xFF7977AA)),
-                                          child: Text("Editar",style:AppTextTheme.medium(color: Colors.white))
+                                    Expanded(
+                                      child: Text(drugs[index].name,style:AppTextTheme.large(),maxLines: 3,
+                                        overflow: TextOverflow.clip,
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 0.3.sw,
-                                      child: ElevatedButton(
-                                          onPressed: (){onRemove(index);},
-                                          style: Styles.button(context, color: Color(0xFFF44336)),
-                                          child: Text("Eliminar",style:AppTextTheme.medium(color: Colors.white))
-                                      ),
-                                    ),
+                                    Text(timeLeft[index],style:AppTextTheme.small())
                                   ],
                                 ),
                               ),
-                            )
-                          ],
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(0.1.sw, 0.005.sh, 0.1.sw, 0.0.sh),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      child: Text(timeOrPill[index],style:AppTextTheme.small(),maxLines: 3),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(0.1.sw, 0.005.sh, 0.1.sw, 0.0.sh),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(drugs[index].indications,style:AppTextTheme.small(),maxLines: 3,overflow: TextOverflow.clip,),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(0.1.sw, 0.005.sh, 0.1.sw, 0.02.sh),
+                                child: Padding(
+                                  padding:EdgeInsets.fromLTRB(0.003.sw, 0.005.sh, 0.0.sw, 0.0.sh),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: 0.3.sw,
+                                        child: ElevatedButton(
+                                            onPressed: (){onEdit(index);},
+                                            style: Styles.button(context, color: Color(0xFF7977AA)),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                const Icon(Icons.edit, color: Colors.white,),
+                                                const SizedBox(width: 5),
+                                                Text("Editar",style:AppTextTheme.medium(color: Colors.white))
+                                              ],
+                                            )
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 0.3.sw,
+                                        child: ElevatedButton(
+                                            onPressed: (){onRemove(index);},
+                                            style: Styles.button(context, color: Color(0xFFF44336)),
+                                            child: Row(
+                                              children: [
+                                                const Icon(Icons.delete, color: Colors.white,),
+                                                const SizedBox(width: 5),
+                                                Text("Eliminar",style:AppTextTheme.medium(color: Colors.white))
+                                              ],
+                                            )
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     );
                   },
                 ),
+              ) : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("No se ha podido recuperar información, intente de nuevo", style: AppTextTheme.medium(color: Colors.black), textAlign: TextAlign.center,)
+                ],
               ),
-              SizedBox(height: 0.05.sh),
-              Padding( // Contenedor con relleno
-                padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0), // Configura el relleno de los extremos laterales
-                child: ElevatedButton( // Agrega un boton al interior
-                    onPressed: onSave, // Funcion que se ejecuta al presionar el boton
-                    style: Styles.button(context, color: AppColors.secondary()), // Color del boton
-                    child: Row( // El contenido del boton se llena como fila
-                      mainAxisAlignment: MainAxisAlignment.center, // Centrado
-                      children: <Widget> [ // Contiene
+              drugs != null && drugs.length > 0 ? SizedBox(height: 0.05.sh) : SizedBox(),
+              drugs != null && drugs.length > 0 ? Padding(
+                padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
+                child: ElevatedButton(
+                    onPressed: onSave,
+                    style: Styles.button(context, color: AppColors.secondary()),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget> [
                         Padding(
                           padding:
                           EdgeInsets.fromLTRB(0, 0.01.sh, 0, 0.01.sh),
-                          child: Text("Guardar",
-                              style: AppTextTheme.medium(
-                                  color: Colors.white)),
+                          child: Row(
+                            children: [
+                              Icon(Icons.save, color: Colors.white, size: 25.sp),
+                              SizedBox(width: 20.sp),
+                              Text("Guardar", style: AppTextTheme.medium(color: Colors.white)),
+                              SizedBox(width: 25.sp)
+                            ],
+                          ),
                         )
                       ],
                     )
                 ),
-              ),
+              ) : SizedBox(),
               SizedBox(height: 0.05.sh),
-              Padding( // Contenedor con relleno
-                padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0), // Configura el relleno de los extremos laterales
-                child: ElevatedButton( // Agrega un boton al interior
-                    onPressed: returnMenu, // Funcion que se ejecuta al presionar el boton
-                    style: Styles.button(context, color: AppColors.primary()), // Estilo del boton
-                    child: Row( // El contenido del boton se llena como fila
-                      mainAxisAlignment: MainAxisAlignment.center, // Centrado
-                      children: <Widget> [ // Contiene
-                        Icon(Icons.arrow_back, color: Colors.white, size: 40.sp), // Agrega un icono
-                        SizedBox(width: 20.sp), // Espacio en blanco horizontal
-                        Text( // Texto
+              Padding(
+                padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
+                child: ElevatedButton(
+                    onPressed: returnMenu,
+                    style: Styles.button(context, color: AppColors.primary()),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.arrow_back, color: Colors.white, size: 40.sp),
+                        SizedBox(width: 20.sp),
+                        Text(
                             "Regresar",
-                            style: AppTextTheme.medium(color: Colors.white) // Formato del texto
+                            style: AppTextTheme.medium(color: Colors.white)
                         ),
-                        SizedBox(width: 25.sp) // Espacio en blanoc
+                        SizedBox(width: 25.sp),
                       ],
                     )
                 ),
@@ -272,7 +319,7 @@ class StateRemainderPhotoResults extends State<RemainderPhotoResults> {
               SizedBox(height: 0.1.sw) // Espacio en blanco vertical
             ],
           ),
-        )
+        ))
     );
   }
 

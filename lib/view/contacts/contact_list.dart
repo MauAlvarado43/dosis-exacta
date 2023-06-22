@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:dosis_exacta/viewmodel/contact_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -70,97 +71,117 @@ class _ContactListState extends State<ContactList> {
             ],
           ),
         ),
-        body: SingleChildScrollView(
+        body: FadeIn(child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: 0.04.sh),
-              SizedBox(
-                height: 0.70.sh,
-                child: ListView.builder(
-                  itemCount: contacts.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.fromLTRB(0.03.sw, 0, 0.03.sw, 0),
-                      child: Card(
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(0.1.sw, 0.02.sh, 0.1.sw, 0.02.sh),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 50.sp,
-                                    height: 50.sp,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(50),
-                                      child: Container(
-                                        color: AppColors.darkbg(),
-                                        child: Icon(Icons.person, color: Colors.white, size: 40.sp),
-                                      )
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 0.05.sw,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      contacts[index].name,
-                                      style: AppTextTheme.medium(),
-                                      maxLines: 3,
-                                      overflow: TextOverflow.clip,
-                                    ),
-                                  )
-                                ],
-                              ),
+              contacts.length > 0
+                ? SizedBox(
+                  height: 0.70.sh,
+                  child: ListView.builder(
+                      itemCount: contacts.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.fromLTRB(0.03.sw, 0, 0.03.sw, 0),
+                          child: Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
                             ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0.02.sh),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    width: 0.3.sw,
-                                    child: ElevatedButton(
-                                      onPressed: () { onClickEdit(index); },
-                                      style: Styles.button(context, color: AppColors.accent()),
-                                      child: Align(
-                                        alignment: Alignment.center,
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(0.1.sw, 0.02.sh, 0.1.sw, 0.02.sh),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 50.sp,
+                                        height: 50.sp,
+                                        child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(50),
+                                            child: Container(
+                                              color: AppColors.darkbg(),
+                                              child: Icon(Icons.person, color: Colors.white, size: 40.sp),
+                                            )
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 0.05.sw,
+                                      ),
+                                      Expanded(
                                         child: Text(
-                                          "Editar",
-                                          style: AppTextTheme.medium(color: Colors.white)
+                                          contacts[index].name,
+                                          style: AppTextTheme.medium(),
+                                          maxLines: 3,
+                                          overflow: TextOverflow.clip,
                                         ),
                                       )
-                                    ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: 0.3.sw,
-                                    child: ElevatedButton(
-                                        onPressed: () { onClickDelete(index); },
-                                      style: Styles.button(context, color: AppColors.danger()),
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          "Eliminar",
-                                          style: AppTextTheme.medium(color: Colors.white)
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0.02.sh),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: 0.3.sw,
+                                        child: ElevatedButton(
+                                            onPressed: (){ onClickEdit(index); },
+                                            style: Styles.button(context, color: Color(0xFF7977AA)),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                const Icon(Icons.edit, color: Colors.white,),
+                                                const SizedBox(width: 5),
+                                                Text("Editar",style:AppTextTheme.medium(color: Colors.white))
+                                              ],
+                                            )
                                         ),
-                                      )
-                                    ),
+                                      ),
+                                      SizedBox(
+                                        width: 0.3.sw,
+                                        child: ElevatedButton(
+                                            onPressed: (){ onClickDelete(index); },
+                                            style: Styles.button(context, color: Color(0xFFF44336)),
+                                            child: Row(
+                                              children: [
+                                                const Icon(Icons.delete, color: Colors.white,),
+                                                const SizedBox(width: 5),
+                                                Text("Eliminar",style:AppTextTheme.medium(color: Colors.white))
+                                              ],
+                                            )
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                  )
+              )
+                : SizedBox(
+                  height: 0.65.sh,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(height: 0.03.sh),
+                      Image.asset("assets/images/no_contacts.png"),
+                      SizedBox(height: 0.03.sh),
+                      Text(
+                        "Aún no tienes contactos registrados",
+                        style: AppTextTheme.medium(color: Colors.black),
+                        textAlign: TextAlign.center,
                       ),
-                    );
-                  }
-                )
+                      SizedBox(height: 0.03.sh),
+                    ],
+                  )
               ),
               SizedBox(height: 0.05.sh),
               Padding(
@@ -174,8 +195,8 @@ class _ContactListState extends State<ContactList> {
                         Icon(Icons.arrow_back, color: Colors.white, size: 40.sp),
                         SizedBox(width: 20.sp),
                         Text(
-                          "Regresar",
-                          style: AppTextTheme.medium(color: Colors.white)
+                            "Regresar",
+                            style: AppTextTheme.medium(color: Colors.white)
                         ),
                         SizedBox(width: 25.sp),
                       ],
@@ -184,7 +205,7 @@ class _ContactListState extends State<ContactList> {
               ),
             ],
           ),
-        )
+        ))
     );
   }
 

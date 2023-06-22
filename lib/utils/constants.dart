@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-const API_URL = "http://192.168.254.58:8000/api";
+const API_URL = "http://44.201.221.76:8000/api";
 
 enum FREQ_TYPE { HOUR, DAILY }
 

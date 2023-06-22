@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:dosis_exacta/viewmodel/home_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -69,7 +70,7 @@ class _ContactMenuState extends State<ContactMenu> {
             ],
           ),
         ),
-        body: SingleChildScrollView(
+        body: FadeIn(child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -134,7 +135,7 @@ class _ContactMenuState extends State<ContactMenu> {
               ),
             ],
           ),
-        )
+        ))
     );
   }
 

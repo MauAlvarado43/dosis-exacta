@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:dosis_exacta/view/common/theme.dart';
 import 'package:dosis_exacta/viewmodel/welcome_vm.dart';
 import 'package:flutter/cupertino.dart';
@@ -65,25 +66,31 @@ class _WelcomeState extends State<Welcome> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(height: 0.10.sh),
-            Image.asset("assets/images/welcome_logo.png"),
+            FadeInLeft(child: Image.asset("assets/images/welcome_logo.png")),
             SizedBox(height: 0.03.sh),
-            Text(
-              "Empieza ahora mismo \n en Dosis Exacta",
-              style: AppTextTheme.large(),
-              textAlign: TextAlign.center
+            FadeInRight(
+              child: Text(
+                  "Empieza ahora mismo \n en Dosis Exacta",
+                  style: AppTextTheme.large(),
+                  textAlign: TextAlign.center
+              ),
             ),
             SizedBox(height: 0.10.sh),
-            Text(
-              "Solo ingresa tu nombre",
-              style: AppTextTheme.medium()
+            FadeInLeft(
+                child: Text(
+                "Solo ingresa tu nombre",
+                style: AppTextTheme.medium()
+              )
             ),
             SizedBox(height: 0.02.sh),
-            Padding(
-              padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
-              child: TextField(
-                controller: _nameController,
-                decoration: Styles.input(context, controller: _nameController),
-              ),
+            FadeInRight(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
+                child: TextField(
+                  controller: _nameController,
+                  decoration: Styles.input(context, controller: _nameController),
+                ),
+              )
             ),
             SizedBox(height: 0.05.sh),
             showValidation
@@ -95,23 +102,25 @@ class _WelcomeState extends State<Welcome> {
             showValidation
               ? SizedBox(height: 0.05.sh)
               : Container(),
-            Padding(
-              padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
-              child: ElevatedButton(
-                  onPressed: onClickStart,
-                  style: Styles.button(context, color: AppColors.primary()),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.play_arrow, color: Colors.white, size: 40.sp),
-                      SizedBox(width: 10.sp),
-                      Text(
-                        "Empezar",
-                        style: AppTextTheme.medium(color: Colors.white)
-                      )
-                    ],
-                  )
-              ),
+            FadeInLeft(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
+                child: ElevatedButton(
+                    onPressed: onClickStart,
+                    style: Styles.button(context, color: AppColors.primary()),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.play_arrow, color: Colors.white, size: 40.sp),
+                        SizedBox(width: 10.sp),
+                        Text(
+                            "Empezar",
+                            style: AppTextTheme.medium(color: Colors.white)
+                        )
+                      ],
+                    )
+                ),
+              )
             )
           ],
         ),

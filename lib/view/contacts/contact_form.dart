@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:dosis_exacta/viewmodel/contact_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -110,7 +111,7 @@ class _ContactFormState extends State<ContactForm> {
             ],
           ),
         ),
-        body: SingleChildScrollView(
+        body: FadeIn(child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -175,7 +176,7 @@ class _ContactFormState extends State<ContactForm> {
                         children: [
                           Padding(
                             padding:
-                                EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
+                            EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
                             child: Text("Correo *", style: AppTextTheme.medium()),
                           )
                         ],
@@ -218,9 +219,9 @@ class _ContactFormState extends State<ContactForm> {
                         children: [
                           Padding(
                             padding:
-                                EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
+                            EdgeInsets.fromLTRB(0.05.sw, 0, 0.05.sw, 0),
                             child:
-                                Text("Teléfono", style: AppTextTheme.medium()),
+                            Text("Teléfono", style: AppTextTheme.medium()),
                           )
                         ],
                       ),
@@ -238,20 +239,25 @@ class _ContactFormState extends State<ContactForm> {
                         padding: EdgeInsets.fromLTRB(0.1.sw, 0, 0.1.sw, 0),
                         child: ElevatedButton(
                             onPressed: onClickSave,
-                            style: Styles.button(context,
-                                color: AppColors.secondary()),
+                            style: Styles.button(context, color: AppColors.secondary()),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
+                              children: <Widget> [
                                 Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                      0, 0.01.sh, 0, 0.01.sh),
-                                  child: Text("Guardar",
-                                      style: AppTextTheme.medium(
-                                          color: Colors.white)),
+                                  padding:
+                                  EdgeInsets.fromLTRB(0, 0.01.sh, 0, 0.01.sh),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.save, color: Colors.white, size: 25.sp),
+                                      SizedBox(width: 20.sp),
+                                      Text("Guardar", style: AppTextTheme.medium(color: Colors.white)),
+                                      SizedBox(width: 25.sp)
+                                    ],
+                                  ),
                                 )
                               ],
-                            )),
+                            )
+                        ),
                       ),
                       SizedBox(height: 0.04.sh),
                     ],
@@ -278,6 +284,6 @@ class _ContactFormState extends State<ContactForm> {
               ),
             ],
           ),
-        ));
+        )));
   }
 }
